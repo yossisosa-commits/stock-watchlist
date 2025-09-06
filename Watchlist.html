@@ -1,73 +1,37 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>רשימת מעקב מניות</title>
+<!DOCTYPE html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>רשימת מעקב מניות — v7.2</title>
 <style>
-:root{
---bg:#0b1020; --card:#0f162b; --muted:#9aa6b2; --txt:#e7edf3;
---line:#203055; --accent:#4da3ff; --ok:#19c37d; --bad:#ff5a5f; --warn:#f2a900;
-}
-*{box-sizing:border-box}
-body{margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial; background:#0b1020; color:var(--txt)}
-header{position:sticky; top:0; z-index:20; background:rgba(11,16,32,.9); border-bottom:1px solid var(--line); backdrop-filter:blur(10px)}
-.header-inner{display:flex; gap:12px; align-items:center; padding:12px 16px; flex-wrap:wrap}
-h1{margin:0; font-size:18px}
-.controls{margin-inline-start:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-input,select,textarea,button{background:#0b1328; border:1px solid var(--line); color:var(--txt); border-radius:10px; padding:8px 10px}
-button{cursor:pointer} .primary{background:#2563eb; border-color:#2563eb}
-main{padding:16px; display:grid; gap:16px}
-.card{background:linear-gradient(180deg,#0f162b,#0d1426); border:1px solid var(--line); border-radius:16px; padding:14px}
-.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
-.k{background:#0b1328; border:1px solid var(--line); border-radius:12px; padding:10px}
-.k .l{font-size:11px; color:var(--muted)} .k .v{margin-top:4px; font-weight:600}
-.grid{display:grid; grid-template-columns:repeat(12,1fr); gap:12px}
-.grid>*{grid-column:span 12}
-@media(min-width:1100px){ .grid>.form{grid-column:span 4} .grid>.tablewrap{grid-column:span 8} }
-.form h3{margin:0 0 8px 0}
-/* טבלה ומעטפת כדי שלא יגלוש */
-.tablewrap{overflow:auto; max-width:100%;}
-table{min-width:1000px; width:100%; border-collapse:collapse; table-layout:fixed}
-th,td{border-bottom:1px solid var(--line); padding:10px; text-align:center; vertical-align:top}
-th{position:sticky; top:70px; z-index:5; background:#0f162b; color:var(--muted); font-size:12px}
-th:nth-child(1),td:nth-child(1){width:90px}
-th:nth-child(2),td:nth-child(2){width:200px}
-th:nth-child(3),td:nth-child(3){width:110px}
-th:nth-child(4),td:nth-child(4){width:130px}
-th:nth-child(5),td:nth-child(5){width:130px}
-th:nth-child(6),td:nth-child(6){width:110px}
-th:nth-child(7),td:nth-child(7){width:200px}
-th:nth-child(8),td:nth-child(8){width:240px}
-th:nth-child(9),td:nth-child(9){width:170px}
-th:nth-child(10),td:nth-child(10){width:110px}
-th:nth-child(11),td:nth-child(11){width:160px}
-a{color:var(--accent); text-decoration:none}
-.chg.pos{color:var(--ok)} .chg.neg{color:var(--bad)}
-.status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--bad)}
-textarea{min-height:60px; resize:vertical; width:100%}
-.row-actions{display:flex; gap:6px; justify-content:center; flex-wrap:wrap}
-.nameCell{cursor:pointer}
-.hint{font-size:12px; color:var(--muted)}
-canvas.spark{width:150px; height:40px; display:block; margin:auto}
-
-/* כרטיס מידע מתרחב בצד – בלי לצאת מהעמוד */
-.drawer{position:fixed; inset-block:0; inset-inline-end:-480px; width:min(480px,100%); background:#0f162b; border-inline-start:1px solid var(--line);
-transition:inset-inline-end .25s ease; z-index:40; display:flex; flex-direction:column}
-.drawer.open{inset-inline-end:0}
-.drawer header{display:flex; align-items:center; justify-content:space-between; padding:12px; border-bottom:1px solid var(--line); background:#0f162b}
-.drawer .content{padding:12px; overflow:auto}
-.chip{display:inline-block; font-size:12px; padding:3px 8px; border-radius:999px; border:1px solid var(--line); background:#0b1328; margin:2px}
-.section h4{margin:8px 0 6px 0; font-size:13px; color:var(--muted)}
-.toast{position:fixed; inset-block-end:16px; inset-inline-start:16px; background:#0b1328; border:1px solid var(--line); padding:10px 12px; border-radius:12px; font-size:12px; display:none; z-index:50}
-
-/* כפתורים בראש שלא ישברו בשורה אחת */
-.controls > *{min-height:36px}
+:root{--bg:#0b1020;--card:#0f162b;--muted:#9aa6b2;--txt:#e7edf3;--line:#203055;--accent:#4da3ff;--ok:#19c37d;--bad:#ff5a5f;--warn:#f2a900}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;background:#0b1020;color:var(--txt)}
+header{position:sticky;top:0;z-index:20;background:rgba(11,16,32,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.header{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px}
+h1{margin:0;font-size:18px}.controls{margin-inline-start:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input,select,textarea,button{background:#0b1328;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 10px}
+button{cursor:pointer}.primary{background:#2563eb;border-color:#2563eb}
+main{padding:16px;display:grid;gap:16px}.card{background:linear-gradient(180deg,#0f162b,#0d1426);border:1px solid var(--line);border-radius:16px;padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.k{background:#0b1328;border:1px solid var(--line);border-radius:12px;padding:10px}.k .l{font-size:11px;color:var(--muted)}.k .v{margin-top:4px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.grid>*{grid-column:span 12}
+@media(min-width:1100px){.form{grid-column:span 4}.tablewrap{grid-column:span 8}}
+.tablewrap{overflow:auto;max-width:100%}
+table{min-width:1000px;width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border-bottom:1px solid var(--line);padding:10px;text-align:center;vertical-align:top}
+th{position:sticky;top:72px;z-index:5;background:#0f162b;color:var(--muted);font-size:12px}
+th:nth-child(1),td:nth-child(1){width:90px}th:nth-child(2),td:nth-child(2){width:200px}th:nth-child(3),td:nth-child(3){width:110px}
+th:nth-child(4),td:nth-child(4){width:130px}th:nth-child(5),td:nth-child(5){width:130px}th:nth-child(6),td:nth-child(6){width:110px}
+th:nth-child(7),td:nth-child(7){width:200px}th:nth-child(8),td:nth-child(8){width:240px}th:nth-child(9),td:nth-child(9){width:170px}
+th:nth-child(10),td:nth-child(10){width:110px}th:nth-child(11),td:nth-child(11){width:160px}
+a{color:var(--accent);text-decoration:none}.chg.pos{color:var(--ok)}.chg.neg{color:var(--bad)}
+.status.ok{color:var(--ok)}.status.warn{color:var(--warn)}.status.bad{color:var(--bad)}textarea{min-height:60px;resize:vertical;width:100%}
+.row-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.nameCell{cursor:pointer}.hint{font-size:12px;color:var(--muted)}
+canvas.spark{width:150px;height:40px;display:block;margin:auto}
+.drawer{position:fixed;inset-block:0;inset-inline-end:-480px;width:min(480px,100%);background:#0f162b;border-inline-start:1px solid var(--line);transition:inset-inline-end .25s;z-index:40;display:flex;flex-direction:column}
+.drawer.open{inset-inline-end:0}.drawer header{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--line)}
+.drawer .content{padding:12px;overflow:auto}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:#0b1328;margin:2px}
+.toast{position:fixed;inset-block-end:16px;inset-inline-start:16px;background:#0b1328;border:1px solid var(--line);padding:10px 12px;border-radius:12px;font-size:12px;display:none;z-index:50}
 </style>
-</head>
-<body>
-<header>
-<div class="header-inner">
+</head><body>
+<header><div class="header">
 <h1>רשימת מעקב מניות</h1>
 <div class="controls">
 <input id="searchInput" placeholder="חיפוש סימול או שם"/>
@@ -76,15 +40,12 @@ transition:inset-inline-end .25s ease; z-index:40; display:flex; flex-direction:
 <button id="applyIntervalBtn">החל</button>
 <button id="refreshBtn">רענון</button>
 <button id="exportBtn">יצוא</button>
-<label for="importFile" style="display:inline-flex; gap:6px; cursor:pointer">יבוא
-<input id="importFile" type="file" accept="application/json" style="display:none">
-</label>
+<label for="importFile" style="display:inline-flex;gap:6px;cursor:pointer">יבוא <input id="importFile" type="file" accept="application/json" style="display:none"></label>
 <input id="avKey" placeholder="AlphaVantage API Key (אופציונלי)" style="width:240px"/>
 <button id="proxyToggleBtn" title="עקיפת CORS">פרוקסי: אוטו</button>
 <button id="notifyBtn" class="primary">הפעל התרעות</button>
 </div>
-</div>
-</header>
+</div></header>
 
 <main>
 <div class="kpis">
@@ -99,55 +60,34 @@ transition:inset-inline-end .25s ease; z-index:40; display:flex; flex-direction:
 <h3>הוספת מניה</h3>
 <label>סימול (גדול באנגלית) <input id="symbolInput" placeholder="NVDA, MSFT, AAPL"></label>
 <label>שם ידידותי יהפוך ל-uppercase <input id="nameInput" placeholder="לא חובה"></label>
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <label>סף עליון <input id="upperInput" type="number" step="0.01" placeholder="לא חובה"></label>
 <label>סף תחתון <input id="lowerInput" type="number" step="0.01" placeholder="לא חובה"></label>
 </div>
-<label>סוג סף
-<select id="thresholdType"><option value="price">מחיר</option><option value="percent">אחוז יומי</option></select>
-</label>
+<label>סוג סף <select id="thresholdType"><option value="price">מחיר</option><option value="percent">אחוז יומי</option></select></label>
 <label>הערה <textarea id="noteInput" placeholder="למה המניה ברשימה, טריגרים, רעיונות..."></textarea></label>
 <button id="addBtn" class="primary">הוסף לרשימה</button>
 <p class="hint">טיפ: אפשר להזין כמה סמלים מופרדים בפסיקים. מחירים כל שנייה. פרטי חברה ודוחות כל 5 דקות.</p>
 </div>
 
 <div class="card tablewrap">
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>סימול</th><th>שם</th><th>מחיר</th><th>שינוי</th><th>שווי שוק</th>
 <th>סטטוס</th><th>סף</th><th>הערות</th><th>מיני גרף</th><th>פרטים</th><th>פעולות</th>
-</tr></thead>
-<tbody id="tbody"></tbody>
-</table>
-<p class="hint">לחיצה על שורה או על שם החברה פותחת כרטיס מידע מורחב בצד: תקציר, דוח אחרון מול צפי, תחזית, PE נוכחי/עתידי, המלצות אנליסטים, תאריך הדוח הבא.</p>
+</tr></thead><tbody id="tbody"></tbody></table>
+<p class="hint">לחיצה על השורה או על שם החברה פותחת כרטיס מידע בתוך העמוד. קישור ל-Yahoo נמצא רק על הסימול.</p>
 </div>
 </div>
 </main>
 
-<!-- Drawer מידע -->
 <aside class="drawer" id="drawer">
-<header>
-<div id="drawerTitle">מידע</div>
-<button id="drawerClose">סגור</button>
-</header>
+<header><div id="drawerTitle">מידע</div><button id="drawerClose">סגור</button></header>
 <div class="content">
 <div id="drawerBadges" style="margin-bottom:8px"></div>
-<div class="section">
-<h4>תקציר חברה</h4>
-<div id="drawerSummary" class="hint" style="line-height:1.6"></div>
-</div>
-<div class="section">
-<h4>דוחות ותחזיות</h4>
-<div id="drawerEarnings" class="hint"></div>
-</div>
-<div class="section">
-<h4>מכפילים ונתונים</h4>
-<div id="drawerFinancials" class="hint"></div>
-</div>
-<div class="section">
-<h4>המלצות אנליסטים</h4>
-<div id="drawerRecs" class="hint"></div>
-</div>
+<div class="section"><h4>תקציר חברה</h4><div id="drawerSummary" class="hint" style="line-height:1.6"></div></div>
+<div class="section"><h4>דוחות ותחזיות</h4><div id="drawerEarnings" class="hint"></div></div>
+<div class="section"><h4>מכפילים ונתונים</h4><div id="drawerFinancials" class="hint"></div></div>
+<div class="section"><h4>המלצות אנליסטים</h4><div id="drawerRecs" class="hint"></div></div>
 </div>
 </aside>
 
@@ -156,343 +96,160 @@ transition:inset-inline-end .25s ease; z-index:40; display:flex; flex-direction:
 
 <script>
 (function(){
-// ==== Providers & proxies ====
-const FROM_FILE = location.protocol === 'file:';
-const PROXIES = ['https://cors.isomorphic-git.org/','https://api.allorigins.win/raw?url=','https://thingproxy.freeboard.io/fetch/'];
-const apis = {
-yQuote: syms => `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(syms)}`,
-ySummary: sym => `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=`+[
+// ===== Version tag =====
+window.__watchlistVersion='7.2';
+
+// ===== Providers / proxies =====
+const ON_GHPAGES = /github\.io$/.test(location.hostname);
+const FROM_FILE = location.protocol==='file:';
+const PROXIES=['https://cors.isomorphic-git.org/','https://api.allorigins.win/raw?url=','https://thingproxy.freeboard.io/fetch/'];
+const apis={
+yQ: syms=>`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(syms)}`,
+yS: sym=>`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=`+[
 'assetProfile','summaryProfile','financialData','defaultKeyStatistics','calendarEvents','earnings','earningsTrend','price','recommendationTrend'
 ].join(','),
-avQuote: (sym,key)=>`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`,
-avOverview: (sym,key)=>`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`
+avQ:(sym,key)=>`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`,
+avO:(sym,key)=>`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`
 };
 
-// ==== State & refs ====
-const STORAGE_KEY='watchlist.v7', LS_PROXY='watchlist.proxy', LS_AV='watchlist.avkey';
-let REFRESH_MS=1000, DETAILS_REFRESH_MS=300000, timer=null, forceProxy=FROM_FILE, lastErr='';
-const savedProxy=localStorage.getItem(LS_PROXY); if(savedProxy==='on') forceProxy=true; if(savedProxy==='off') forceProxy=false;
+// ===== State / elements =====
+const LS_PROXY='watchlist.proxy', LS_AV='watchlist.avkey', LS_STORE='watchlist.v7.2';
+let REFRESH=1000, DETAILS=300000, t=null, forceProxy=FROM_FILE||ON_GHPAGES, lastErr='';
+const saved=localStorage.getItem(LS_PROXY); if(saved==='on') forceProxy=true; if(saved==='off') forceProxy=false;
 
-let state = load() || {items:[], lastPrices:{}, details:{}, spark:{}, lastUpdated:null, activeAlerts:0};
+let state=load()||{items:[],lastPrices:{},details:{},spark:{},lastUpdated:null,activeAlerts:0};
+const $=id=>document.getElementById(id);
+const el={tbody:$('tbody'),add:$('addBtn'),sym:$('symbolInput'),name:$('nameInput'),
+upper:$('upperInput'),lower:$('lowerInput'),th:$('thresholdType'),note:$('noteInput'),
+refresh:$('refreshBtn'),notify:$('notifyBtn'),exportBtn:$('exportBtn'),importFile:$('importFile'),
+search:$('searchInput'),sort:$('sortChangeBtn'),interval:$('intervalInput'),apply:$('applyIntervalBtn'),
+kCount:$('kpiCount'),kAlerts:$('kpiAlerts'),kUpd:$('kpiUpdated'),kLoad:$('kpiLoad'),
+avKey:$('avKey'),proxy:$('proxyToggleBtn'),toast:$('toast'),beep:$('beep'),
+drawer:$('drawer'),close:$('drawerClose'),title:$('drawerTitle'),
+dBadges:$('drawerBadges'),dSum:$('drawerSummary'),dEarn:$('drawerEarnings'),dFin:$('drawerFinancials'),dRecs:$('drawerRecs')};
 
-const $ = id => document.getElementById(id);
-const el = {
-tbody: $('tbody'), addBtn:$('addBtn'), symbol:$('symbolInput'), name:$('nameInput'),
-upper:$('upperInput'), lower:$('lowerInput'), thType:$('thresholdType'), note:$('noteInput'),
-refresh:$('refreshBtn'), notify:$('notifyBtn'), exportBtn:$('exportBtn'), importFile:$('importFile'),
-search:$('searchInput'), sort:$('sortChangeBtn'), interval:$('intervalInput'), applyInt:$('applyIntervalBtn'),
-kCount:$('kpiCount'), kAlerts:$('kpiAlerts'), kUpdated:$('kpiUpdated'), kLoad:$('kpiLoad'),
-avKey:$('avKey'), proxyBtn:$('proxyToggleBtn'), toast:$('toast'), beep:$('beep'),
-drawer:$('drawer'), drawerClose:$('drawerClose'), drawerTitle:$('drawerTitle'),
-dBadges:$('drawerBadges'), dSummary:$('drawerSummary'), dEarnings:$('drawerEarnings'),
-dFinancials:$('drawerFinancials'), dRecs:$('drawerRecs')
-};
+function save(){localStorage.setItem(LS_STORE,JSON.stringify(state))}
+function load(){try{return JSON.parse(localStorage.getItem(LS_STORE))}catch{return null}}
+const fmt=(n,dp=2)=>(n==null||isNaN(n))?'-':Number(n).toLocaleString('en-US',{maximumFractionDigits:dp});
+function cap(n){if(!n||n<=0)return'-';const u=[['T',1e12],['B',1e9],['M',1e6]];for(const[s,v]of u){if(n>=v)return(n/v).toFixed(2)+s}return fmt(n,0)}
+const now=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const esc=t=>t?t.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])):'';
 
-function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }
-function load(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))}catch{return null} }
-
-const fmt=(n,dp=2)=> (n==null||isNaN(n))?'-':Number(n).toLocaleString('en-US',{maximumFractionDigits:dp});
-function cap(n){ if(!n||n<=0) return '-'; const u=[['T',1e12],['B',1e9],['M',1e6]]; for(const[s,v] of u){ if(n>=v) return (n/v).toFixed(2)+s } return fmt(n,0) }
-const now=()=> new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-const esc=t=> t? t.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])):'';
-
-// ==== Robust fetch with fallback ====
 async function getJSON(url,{useProxies=true}={}){
-try{ const r=await fetch(url,{cache:'no-store'}); if(r.ok) return r.json(); throw new Error('HTTP '+r.status) }
-catch(e){ lastErr=e.message }
+try{const r=await fetch(url,{cache:'no-store'}); if(r.ok) return r.json(); throw new Error('HTTP '+r.status)}
+catch(e){lastErr=e.message}
 if(useProxies){
 for(const p of PROXIES){
-try{ const r=await fetch(p+url,{cache:'no-store'}); if(r.ok) return r.json() }catch(e){ lastErr=e.message }
+try{const r=await fetch(p+url,{cache:'no-store'}); if(r.ok) return r.json()}catch(e){lastErr=e.message}
 }
 }
 throw new Error(lastErr||'fetch failed');
 }
 
-// ==== Add & render ====
-function parseSymbols(s){return s.split(',').map(x=>x.trim()).filter(Boolean)}
-function upsert(sym,name,up,lo,note,type){
-sym=(sym||'').trim().toUpperCase(); name=name?name.toUpperCase():'';
-if(!sym) return;
-const i=state.items.findIndex(x=>x.symbol===sym);
-const base={symbol:sym,name,upper:up||'',lower:lo||'',note:note||'',thType:type||'price'};
+function parseSyms(s){return s.split(',').map(x=>x.trim()).filter(Boolean)}
+function upsert(sym,name,up,lo,note,typ){sym=(sym||'').toUpperCase();name=name?name.toUpperCase():'';
+if(!sym) return; const i=state.items.findIndex(x=>x.symbol===sym);
+const base={symbol:sym,name,upper:up||'',lower:lo||'',note:note||'',thType:typ||'price'};
 if(i>=0) state.items[i]={...state.items[i],...base}; else state.items.push(base);
 delete state.details[sym]; state.spark[sym]=[]; save(); render(); quotes([sym]); details([sym]);
 }
-function removeRow(sym){
-state.items=state.items.filter(x=>x.symbol!==sym);
-delete state.lastPrices[sym]; delete state.details[sym]; delete state.spark[sym];
-save(); render();
-}
-function drawSpark(cv,pts){
-if(!cv) return; const c=cv.getContext('2d'), w=cv.width, h=cv.height;
-c.clearRect(0,0,w,h); if(!pts||pts.length<2) return;
-const mn=Math.min(...pts), mx=Math.max(...pts), r=(mx-mn)||1;
-c.beginPath(); for(let i=0;i<pts.length;i++){ const x=i*(w/(pts.length-1)), y=h-((pts[i]-mn)/r)*h; i?c.lineTo(x,y):c.moveTo(x,y) }
-c.lineWidth=1.6; c.strokeStyle='#4da3ff'; c.stroke();
-}
-function pushSpark(sym,p){ if(p==null||isNaN(p)) return; const a=state.spark[sym]||[]; a.push(+p); while(a.length>150)a.shift(); state.spark[sym]=a }
-
-function statusOf(it,q){
-const price=q?.regularMarketPrice; if(price==null) return {c:'',t:'ממתין'};
-if((it.thType||'price')==='price'){
-const u=+it.upper, l=+it.lower;
-if(!isNaN(u)&&price>=u) return {c:'bad',t:'חצה עליון'};
-if(!isNaN(l)&&price<=l) return {c:'warn',t:'חצה תחתון'};
-return {c:'ok',t:'בטווח'};
-} else {
-const pct=q?.regularMarketChangePercent, u=+it.upper, l=+it.lower;
-if(!isNaN(u)&&pct>=u) return {c:'bad',t:'אחוז מעל'};
-if(!isNaN(l)&&pct<=l) return {c:'warn',t:'אחוז מתחת'};
-return {c:'ok',t:'בטווח'};
-}
-}
-
-function filterRow(it){
-const s=el.search.value.trim().toLowerCase(); if(!s) return true;
-const q=(it.symbol+' '+(it.name||'')+' '+(state.details[it.symbol]?.profile?.longBusinessSummary||'')).toLowerCase();
-return q.includes(s);
-}
-
+function removeRow(sym){state.items=state.items.filter(x=>x.symbol!==sym); delete state.lastPrices[sym]; delete state.details[sym]; delete state.spark[sym]; save(); render()}
+function drawSpark(cv,pts){if(!cv)return;const c=cv.getContext('2d'),w=cv.width,h=cv.height;c.clearRect(0,0,w,h);if(!pts||pts.length<2)return;const mn=Math.min(...pts),mx=Math.max(...pts),rg=(mx-mn)||1;c.beginPath();for(let i=0;i<pts.length;i++){const x=i*(w/(pts.length-1)),y=h-((pts[i]-mn)/rg)*h;i?c.lineTo(x,y):c.moveTo(x,y)}c.lineWidth=1.6;c.strokeStyle='#4da3ff';c.stroke()}
+function pushSpark(sym,p){if(p==null||isNaN(p))return;const a=state.spark[sym]||[];a.push(+p);while(a.length>150)a.shift();state.spark[sym]=a}
+function stat(it,q){const price=q?.regularMarketPrice;if(price==null)return{c:'',t:'ממתין'};if((it.thType||'price')==='price'){const u=+it.upper,l=+it.lower;if(!isNaN(u)&&price>=u)return{c:'bad',t:'חצה עליון'};if(!isNaN(l)&&price<=l)return{c:'warn',t:'חצה תחתון'};return{c:'ok',t:'בטווח'}}const pct=q?.regularMarketChangePercent,u=+it.upper,l=+it.lower;if(!isNaN(u)&&pct>=u)return{c:'bad',t:'אחוז מעל'};if(!isNaN(l)&&pct<=l)return{c:'warn',t:'אחוז מתחת'};return{c:'ok',t:'בטווח'}}
+function filterRow(it){const s=$('searchInput').value.trim().toLowerCase();if(!s)return true;const q=(it.symbol+' '+(it.name||'')+' '+(state.details[it.symbol]?.profile?.longBusinessSummary||'')).toLowerCase();return q.includes(s)}
 function render(){
 el.tbody.innerHTML=''; state.activeAlerts=0;
 for(const it of [...state.items].filter(filterRow)){
-const q=state.lastPrices[it.symbol]||{}, ch=(q.regularMarketChangePercent||0)>=0?'pos':'neg', st=statusOf(it,q);
-if(st.c==='bad'||st.c==='warn') state.activeAlerts++;
-const tr=document.createElement('tr'); tr.setAttribute('data-row', it.symbol);
-tr.innerHTML=`
-<td><a href="https://finance.yahoo.com/quote/${it.symbol}" target="_blank" rel="noopener">${it.symbol}</a></td>
+const q=state.lastPrices[it.symbol]||{}, ch=(q.regularMarketChangePercent||0)>=0?'pos':'neg', st=stat(it,q); if(st.c!=='ok') state.activeAlerts++;
+const tr=document.createElement('tr'); tr.dataset.sym=it.symbol;
+tr.innerHTML=`<td><a href="https://finance.yahoo.com/quote/${it.symbol}" target="_blank" rel="noopener">${it.symbol}</a></td>
 <td class="nameCell" data-sym="${it.symbol}" title="לחץ לפירוט">${it.name||q.shortName||q.longName||'-'}</td>
 <td>${fmt(q.regularMarketPrice)}</td>
 <td class="chg ${ch}">${fmt(q.regularMarketChange)} (${fmt(q.regularMarketChangePercent,2)}%)</td>
 <td>${cap(q.marketCap)}</td>
 <td class="status ${st.c}">${st.t}</td>
-<td class="hint">
-<select data-bind="thType" data-sym="${it.symbol}">
-<option value="price" ${it.thType==='price'?'selected':''}>מחיר</option>
-<option value="percent" ${it.thType==='percent'?'selected':''}>אחוז</option>
-</select><br>
-עליון <input data-bind="upper" data-sym="${it.symbol}" type="number" step="0.01" value="${it.upper||''}" style="width:80px">
-| תחתון <input data-bind="lower" data-sym="${it.symbol}" type="number" step="0.01" value="${it.lower||''}" style="width:80px">
-</td>
+<td class="hint"><select data-bind="thType" data-sym="${it.symbol}"><option value="price" ${it.thType==='price'?'selected':''}>מחיר</option><option value="percent" ${it.thType==='percent'?'selected':''}>אחוז</option></select><br>
+עליון <input data-bind="upper" data-sym="${it.symbol}" type="number" step="0.01" value="${it.upper||''}" style="width:80px"> |
+תחתון <input data-bind="lower" data-sym="${it.symbol}" type="number" step="0.01" value="${it.lower||''}" style="width:80px"></td>
 <td><textarea data-bind="note" data-sym="${it.symbol}" class="hint">${it.note||''}</textarea></td>
 <td><canvas class="spark" width="150" height="40" data-sym="${it.symbol}"></canvas></td>
 <td><button data-act="info" data-sym="${it.symbol}">מידע</button></td>
-<td class="row-actions">
-<button data-act="save" data-sym="${it.symbol}">שמור</button>
-<button data-act="del" data-sym="${it.symbol}">מחק</button>
-<button data-act="refreshDetails" data-sym="${it.symbol}">רענן פרטים</button>
-</td>`;
-el.tbody.appendChild(tr);
-drawSpark(tr.querySelector('canvas.spark'), state.spark[it.symbol]||[]);
-// אפשר לפתוח כרטיס מידע גם בלחיצה על כל השורה
-tr.addEventListener('click', e=>{
-if(e.target.closest('button')||e.target.closest('select')||e.target.closest('input')||e.target.closest('textarea')||e.target.closest('a')) return;
-openDrawer(it.symbol);
-});
+<td class="row-actions"><button data-act="save" data-sym="${it.symbol}">שמור</button><button data-act="del" data-sym="${it.symbol}">מחק</button><button data-act="refreshDetails" data-sym="${it.symbol}">רענן פרטים</button></td>`;
+el.tbody.appendChild(tr); drawSpark(tr.querySelector('canvas.spark'),state.spark[it.symbol]||[]);
+// פתיחת כרטיס גם בלחיצה על כל השורה
+tr.addEventListener('click',e=>{ if(e.target.closest('button,select,input,textarea,a')) return; openDrawer(it.symbol) });
 }
-el.kCount.textContent=state.items.length;
-el.kAlerts.textContent=state.activeAlerts;
-el.kUpdated.textContent=state.lastUpdated||'-';
+el.kCount.textContent=state.items.length; el.kAlerts.textContent=state.activeAlerts; el.kUpd.textContent=state.lastUpdated||'-';
 el.kLoad.textContent = lastErr ? ('שגיאת בקשות: '+lastErr) : 'תקין';
 }
+function toast(m){el.toast.textContent=m; el.toast.style.display='block'; clearTimeout(el.toast._t); el.toast._t=setTimeout(()=>el.toast.style.display='none',2000)}
+function fireAlert(sym,price,type,item,pct){try{el.beep.currentTime=0; el.beep.play().catch(()=>{})}catch{} const isPct=item.thType==='percent'; const body=type==='upper'?(isPct?`השינוי ${fmt(pct,2)}% מעל ${item.upper}%`:`המחיר ${fmt(price)} מעל ${item.upper}`):(isPct?`השינוי ${fmt(pct,2)}% מתחת ${item.lower}%`:`המחיר ${fmt(price)} מתחת ${item.lower}`); if('Notification'in window&&Notification.permission==='granted') new Notification(`התראה ${sym}`,{body}); else toast(`התראה ${sym} - ${body}`)}
+function alerts(){for(const it of state.items){const q=state.lastPrices[it.symbol]; if(!q) continue; let x='none'; if((it.thType||'price')==='price'){const p=q.regularMarketPrice,u=+it.upper,l=+it.lower; if(!isNaN(u)&&p>=u)x='upper'; else if(!isNaN(l)&&p<=l)x='lower'}else{const pct=q?.regularMarketChangePercent,u=+it.upper,l=+it.lower;if(!isNaN(u)&&pct>=u)x='upper'; else if(!isNaN(l)&&pct<=l)x='lower'} const prev=(q._prevAlert||'none'); if(x!=='none'&&x!==prev) fireAlert(it.symbol,q.regularMarketPrice,x,it,q.regularMarketChangePercent); q._prevAlert=x}}
 
-// ==== Toast & alerts ====
-function toast(msg){ el.toast.textContent=msg; el.toast.style.display='block'; clearTimeout(el.toast._t); el.toast._t=setTimeout(()=>el.toast.style.display='none',2000) }
-function fireAlert(sym,price,type,item,pct){
-try{ el.beep.currentTime=0; el.beep.play().catch(()=>{}) }catch{}
-const isPct=item.thType==='percent';
-const body = type==='upper' ? (isPct?`השינוי ${fmt(pct,2)}% מעל ${item.upper}%`:`המחיר ${fmt(price)} מעל ${item.upper}`) : (isPct?`השינוי ${fmt(pct,2)}% מתחת ${item.lower}%`:`המחיר ${fmt(price)} מתחת ${item.lower}`);
-if('Notification'in window && Notification.permission==='granted') new Notification(`התראה ${sym}`,{body}); else toast(`התראה ${sym} - ${body}`);
-}
-function checkAlerts(){
-for(const it of state.items){
-const q=state.lastPrices[it.symbol]; if(!q) continue;
-let crossed='none';
-if((it.thType||'price')==='price'){ const p=q.regularMarketPrice, u=+it.upper, l=+it.lower; if(!isNaN(u)&&p>=u) crossed='upper'; else if(!isNaN(l)&&p<=l) crossed='lower'; }
-else { const pct=q?.regularMarketChangePercent, u=+it.upper, l=+it.lower; if(!isNaN(u)&&pct>=u) crossed='upper'; else if(!isNaN(l)&&pct<=l) crossed='lower'; }
-const prev=(q._prevAlert||'none'); if(crossed!=='none'&&crossed!==prev) fireAlert(it.symbol,q.regularMarketPrice,crossed,it,q.regularMarketChangePercent);
-q._prevAlert=crossed;
-}
-}
-
-// ==== Data fetchers ====
 async function quotes(symbols){
-if(!symbols||!symbols.length) symbols=state.items.map(x=>x.symbol);
-if(!symbols.length) return;
-lastErr='';
-const groups=[]; for(let i=0;i<symbols.length;i+=50) groups.push(symbols.slice(i,i+50));
+if(!symbols||!symbols.length) symbols=state.items.map(x=>x.symbol); if(!symbols.length) return;
+lastErr=''; const groups=[]; for(let i=0;i<symbols.length;i+=50) groups.push(symbols.slice(i,i+50));
 for(const g of groups){
 try{
-const j=await getJSON(apis.yQuote(g.join(',')), {useProxies:forceProxy||FROM_FILE});
-const arr=j?.quoteResponse?.result||[];
-for(const q of arr){
-state.lastPrices[q.symbol]=q;
-const idx=state.items.findIndex(x=>x.symbol===q.symbol);
-if(idx>=0 && !state.items[idx].name) state.items[idx].name=(q.shortName||q.longName||'').toUpperCase();
-pushSpark(q.symbol, q.regularMarketPrice);
-}
+const j=await getJSON(apis.yQ(g.join(',')),{useProxies:forceProxy||FROM_FILE||ON_GHPAGES}); const arr=j?.quoteResponse?.result||[];
+for(const q of arr){ state.lastPrices[q.symbol]=q; const idx=state.items.findIndex(x=>x.symbol===q.symbol); if(idx>=0&&!state.items[idx].name) state.items[idx].name=(q.shortName||q.longName||'').toUpperCase(); pushSpark(q.symbol,q.regularMarketPrice) }
 }catch(e){
-lastErr=e.message;
-const key=(el.avKey.value||localStorage.getItem(LS_AV)||'').trim();
-if(key){
-for(const sym of g){
-try{
-const jq=await getJSON(apis.avQuote(sym,key),{useProxies:false});
-const data=jq['Global Quote']||{};
-const price=Number(data['05. price']); const chg=Number(data['09. change']); const chgp=parseFloat((data['10. change percent']||'').replace('%',''));
-state.lastPrices[sym]={symbol:sym,shortName:sym,regularMarketPrice:price,regularMarketChange:chg,regularMarketChangePercent:chgp,marketCap:null};
-pushSpark(sym,price);
-}catch(_){}
+lastErr=e.message; const key=(el.avKey.value||localStorage.getItem(LS_AV)||'').trim();
+if(key){ for(const sym of g){ try{ const jq=await getJSON(apis.avQ(sym,key),{useProxies:false}); const d=jq['Global Quote']||{}; const price=Number(d['05. price']); const chg=Number(d['09. change']); const chgp=parseFloat((d['10. change percent']||'').replace('%','')); state.lastPrices[sym]={symbol:sym,shortName:sym,regularMarketPrice:price,regularMarketChange:chg,regularMarketChangePercent:chgp,marketCap:null}; pushSpark(sym,price) }catch(_){}}}
 }
 }
-}
-}
-state.lastUpdated=now(); save(); render(); checkAlerts();
+state.lastUpdated=now(); save(); render(); alerts();
 }
 
 async function details(symbols){
-if(!symbols||!symbols.length) symbols=state.items.map(x=>x.symbol);
-if(!symbols.length) return;
+if(!symbols||!symbols.length) symbols=state.items.map(x=>x.symbol); if(!symbols.length) return;
 for(const sym of symbols){
 try{
-const j=await getJSON(apis.ySummary(sym), {useProxies:forceProxy||FROM_FILE});
-const r=j?.quoteSummary?.result?.[0]||{};
-const profile=r.summaryProfile||r.assetProfile||{};
-const fin=r.financialData||{}, stats=r.defaultKeyStatistics||{}, earnings=r.earnings||{}, trend=r.earningsTrend||{}, rec=r.recommendationTrend||{}, price=r.price||{}, cal=r.calendarEvents||{};
-let lastQ=null, nextQ='', nextDate='';
-const qArr=earnings.earningsChart?.quarterly||[];
-if(qArr.length){
-const last=qArr[qArr.length-1];
-lastQ={date:last?.date||'', actual:last?.actual?.raw??last?.actual, estimate:last?.estimate?.raw??last?.estimate};
-if(lastQ.actual!=null && lastQ.estimate!=null){
-const diff=+lastQ.actual-+lastQ.estimate; const sp=lastQ.estimate?(diff/+lastQ.estimate)*100:null;
-lastQ.surpriseText = sp==null? 'אין נתון' : (sp>=0? `הפתעה חיובית ${fmt(sp,2)}%` : `הפתעה שלילית ${fmt(Math.abs(sp),2)}%`);
-}
-}
-const tArr=trend.trend||[]; if(tArr.length){
-const nx=tArr[0], p=nx?.period||''; const mean=nx?.earningsEstimate?.avg?.raw ?? nx?.earningsEstimate?.avg; const rev=nx?.revenueEstimate?.avg?.raw ?? nx?.revenueEstimate?.avg;
-nextQ=`תקופה ${p} EPS תחזית ${mean!=null?fmt(mean,2):'-'} הכנסות ${rev!=null?fmt(rev,0):'-'}`;
-}
-nextDate = cal?.earnings?.earningsDate?.[0]?.fmt || cal?.earnings?.earningsDate?.fmt || '';
-
-state.details[sym] = {
-profile,
-fin:{ totalRevenue:fin?.totalRevenue?.raw??fin?.totalRevenue, forwardPE:fin?.forwardPE?.raw??fin?.forwardPE,
-recommendationMean:fin?.recommendationMean?.raw??fin?.recommendationMean, recommendationKey:fin?.recommendationKey||'' },
-stats:{ trailingPE:stats?.trailingPE?.raw??stats?.trailingPE, forwardPE:stats?.forwardPE?.raw??stats?.forwardPE,
-operatingMargins:stats?.operatingMargins?.raw??stats?.operatingMargins },
-price, earn:{ lastQ }, trend:{ nextQ }, rec: rec?.trend?.[0] || null, nextEarnings: nextDate, _ts: Date.now()
-};
-save(); render();
+const j=await getJSON(apis.yS(sym),{useProxies:forceProxy||FROM_FILE||ON_GHPAGES}); const r=j?.quoteSummary?.result?.[0]||{};
+const prof=r.summaryProfile||r.assetProfile||{}, fin=r.financialData||{}, stats=r.defaultKeyStatistics||{}, earn=r.earnings||{}, tr=r.earningsTrend||{}, rec=r.recommendationTrend||{}, price=r.price||{}, cal=r.calendarEvents||{};
+let lastQ=null,nextQ='',nextDate=''; const qArr=earn.earningsChart?.quarterly||[]; if(qArr.length){const last=qArr[qArr.length-1]; lastQ={date:last?.date||'',actual:last?.actual?.raw??last?.actual,estimate:last?.estimate?.raw??last?.estimate}; if(lastQ.actual!=null&&lastQ.estimate!=null){const diff=+lastQ.actual-+lastQ.estimate; const sp=lastQ.estimate?(diff/+lastQ.estimate)*100:null; lastQ.surpriseText=sp==null?'אין נתון':(sp>=0?`הפתעה חיובית ${fmt(sp,2)}%`:`הפתעה שלילית ${fmt(Math.abs(sp),2)}%`)}} const tArr=tr.trend||[]; if(tArr.length){const nx=tArr[0],p=nx?.period||''; const mean=nx?.earningsEstimate?.avg?.raw ?? nx?.earningsEstimate?.avg; const rev=nx?.revenueEstimate?.avg?.raw ?? nx?.revenueEstimate?.avg; nextQ=`תקופה ${p} EPS תחזית ${mean!=null?fmt(mean,2):'-'} הכנסות ${rev!=null?fmt(rev,0):'-'}`} nextDate=cal?.earnings?.earningsDate?.[0]?.fmt || cal?.earnings?.earningsDate?.fmt || '';
+state.details[sym]={profile:prof,fin:{totalRevenue:fin?.totalRevenue?.raw??fin?.totalRevenue,forwardPE:fin?.forwardPE?.raw??fin?.forwardPE,recommendationMean:fin?.recommendationMean?.raw??fin?.recommendationMean,recommendationKey:fin?.recommendationKey||''},stats:{trailingPE:stats?.trailingPE?.raw??stats?.trailingPE,forwardPE:stats?.forwardPE?.raw??stats?.forwardPE,operatingMargins:stats?.operatingMargins?.raw??stats?.operatingMargins},price,earn:{lastQ},trend:{nextQ},rec:rec?.trend?.[0]||null,nextEarnings:nextDate,_ts:Date.now()}; save(); render();
 }catch(e){
-const key=(el.avKey.value||localStorage.getItem(LS_AV)||'').trim();
-if(key){
-try{
-const j=await getJSON(apis.avOverview(sym,key),{useProxies:false});
-state.details[sym]=state.details[sym]||{};
-state.details[sym].profile={longBusinessSummary:j.Description||''};
-state.details[sym].fin={forwardPE:+j.ForwardPE||null,totalRevenue:+j.RevenueTTM||null, recommendationMean:null, recommendationKey:''};
-state.details[sym].stats={trailingPE:+j.TrailingPE||null,forwardPE:+j.ForwardPE||null,operatingMargins:null};
-state.details[sym].nextEarnings = j.LatestQuarter || '';
-state.details[sym]._ts=Date.now(); save(); render();
-}catch(_){}
-}
+const key=(el.avKey.value||localStorage.getItem(LS_AV)||'').trim(); if(key){ try{ const j=await getJSON(apis.avO(sym,key),{useProxies:false}); state.details[sym]=state.details[sym]||{}; state.details[sym].profile={longBusinessSummary:j.Description||''}; state.details[sym].fin={forwardPE:+j.ForwardPE||null,totalRevenue:+j.RevenueTTM||null,recommendationMean:null,recommendationKey:''}; state.details[sym].stats={trailingPE:+j.TrailingPE||null,forwardPE:+j.ForwardPE||null,operatingMargins:null}; state.details[sym].nextEarnings=j.LatestQuarter||''; state.details[sym]._ts=Date.now(); save(); render(); }catch(_){ } }
 }
 await new Promise(r=>setTimeout(r,300));
 }
 }
-
-function periodicDetails(){
-const nowT=Date.now();
-const due=state.items.filter(it=>{const d=state.details[it.symbol]; return !d||!d._ts||(nowT-d._ts>DETAILS_REFRESH_MS)}).map(x=>x.symbol);
-if(due.length) details(due);
-}
+function refreshDetails(){const nowT=Date.now(); const due=state.items.filter(it=>{const d=state.details[it.symbol]; return !d||!d._ts||(nowT-d._ts>DETAILS)}).map(x=>x.symbol); if(due.length) details(due)}
 
 // ==== Drawer ====
-function openDrawer(sym){
-const q=state.lastPrices[sym]||{}, d=state.details[sym]||{};
-el.drawerTitle.textContent = `${sym} - ${(q.shortName||q.longName||'')}`;
-el.dBadges.innerHTML = `<span class="chip">מחיר ${fmt(q.regularMarketPrice)}</span><span class="chip">שינוי ${fmt(q.regularMarketChangePercent,2)}%</span><span class="chip">שווי שוק ${cap(q.marketCap)}</span>`;
-el.dSummary.innerHTML = esc(d.profile?.longBusinessSummary)||'אין תקציר';
-const lq=d.earn?.lastQ;
-el.dEarnings.innerHTML = `
-<div>דוח אחרון: <b>${lq?.date||'-'}</b> EPS בפועל <b>${fmt(lq?.actual,2)}</b> מול צפי <b>${fmt(lq?.estimate,2)}</b> — ${lq?.surpriseText||'-'}</div>
-<div style="margin-top:6px">${d.trend?.nextQ||''}</div>
-<div style="margin-top:6px">תאריך הדוח הבא: <b>${d.nextEarnings||'-'}</b></div>`;
+function openDrawer(sym){ if(!state.details[sym]){ details([sym]).then(()=>openDrawer(sym)); return; }
+const q=state.lastPrices[sym]||{}, d=state.details[sym]||{}; el.title.textContent=`${sym} - ${(q.shortName||q.longName||'')}`;
+el.dBadges.innerHTML=`<span class="chip">מחיר ${fmt(q.regularMarketPrice)}</span><span class="chip">שינוי ${fmt(q.regularMarketChangePercent,2)}%</span><span class="chip">שווי שוק ${cap(q.marketCap)}</span>`;
+el.dSum.innerHTML=esc(d.profile?.longBusinessSummary)||'אין תקציר';
+const l=d.earn?.lastQ; el.dEarn.innerHTML=`<div>דוח אחרון: <b>${l?.date||'-'}</b> EPS בפועל <b>${fmt(l?.actual,2)}</b> מול צפי <b>${fmt(l?.estimate,2)}</b> — ${l?.surpriseText||'-'}</div><div style="margin-top:6px">${d.trend?.nextQ||''}</div><div style="margin-top:6px">תאריך הדוח הבא: <b>${d.nextEarnings||'-'}</b></div>`;
 const peNow=q.trailingPE ?? d.stats?.trailingPE ?? null, peFwd=q.forwardPE ?? d.stats?.forwardPE ?? d.fin?.forwardPE ?? null;
-el.dFinancials.innerHTML = `
-<div>PE נוכחי <b>${peNow==null?'-':fmt(peNow,2)}</b> | PE עתידי <b>${peFwd==null?'-':fmt(peFwd,2)}</b></div>
-<div>הכנסות שנתיות <b>${d.fin?.totalRevenue?fmt(d.fin.totalRevenue,0):'-'}</b> | מרווח תפעולי <b>${d.stats?.operatingMargins!=null?fmt(d.stats.operatingMargins*100,2)+'%':'-'}</b></div>`;
+el.dFin.innerHTML=`<div>PE נוכחי <b>${peNow==null?'-':fmt(peNow,2)}</b> | PE עתידי <b>${peFwd==null?'-':fmt(peFwd,2)}</b></div><div>הכנסות שנתיות <b>${d.fin?.totalRevenue?fmt(d.fin.totalRevenue,0):'-'}</b> | מרווח תפעולי <b>${d.stats?.operatingMargins!=null?fmt(d.stats.operatingMargins*100,2)+'%':'-'}</b></div>`;
 const r=d.rec, mean=d.fin?.recommendationMean, key=d.fin?.recommendationKey;
-el.dRecs.innerHTML = r ? `
-<div class="chip">Strong Buy ${r.strongBuy??'-'}</div>
-<div class="chip">Buy ${r.buy??'-'}</div>
-<div class="chip">Hold ${r.hold??'-'}</div>
-<div class="chip">Sell ${r.sell??'-'}</div>
-<div class="chip">Strong Sell ${r.strongSell??'-'}</div>
-<div style="margin-top:6px">ציון ממוצע <b>${mean!=null?fmt(mean,2):'-'}</b> תיוג <b>${key||'-'}</b> (1 קניה חזקה, 5 מכירה חזקה)</div>
-` : `אין טרנד זמין. ציון <b>${mean!=null?fmt(mean,2):'-'}</b> תיוג <b>${key||'-'}</b>`;
+el.dRecs.innerHTML=r?`<div class="chip">Strong Buy ${r.strongBuy??'-'}</div><div class="chip">Buy ${r.buy??'-'}</div><div class="chip">Hold ${r.hold??'-'}</div><div class="chip">Sell ${r.sell??'-'}</div><div class="chip">Strong Sell ${r.strongSell??'-'}</div><div style="margin-top:6px">ציון ממוצע <b>${mean!=null?fmt(mean,2):'-'}</b> תיוג <b>${key||'-'}</b> (1 קניה חזקה, 5 מכירה חזקה)</div>`:`אין טרנד זמין. ציון <b>${mean!=null?fmt(mean,2):'-'}</b> תיוג <b>${key||'-'}</b>`;
 el.drawer.classList.add('open');
 }
-el.drawerClose.addEventListener('click', ()=> el.drawer.classList.remove('open'));
+el.close.addEventListener('click',()=>el.drawer.classList.remove('open'));
 
 // ==== Events ====
-el.addBtn.addEventListener('click', ()=>{
-const syms=parseSymbols(el.symbol.value.toUpperCase()); if(!syms.length) return;
-for(const s of syms) upsert(s,(el.name.value||'').toUpperCase(),el.upper.value,el.lower.value,el.note.value.trim(),el.thType.value);
-el.symbol.value=''; el.name.value=''; el.upper.value=''; el.lower.value=''; el.note.value='';
-});
-el.refresh.addEventListener('click', ()=>{ quotes(); periodicDetails() });
-el.applyInt.addEventListener('click', ()=>{ REFRESH_MS=Math.max(1000,parseInt(el.interval.value||'1',10)*1000); clearInterval(timer); timer=setInterval(()=>{quotes(); periodicDetails()},REFRESH_MS); quotes(); });
-el.notify.addEventListener('click', async()=>{ if(!('Notification'in window)){toast('אין תמיכה בהתראות'); return} const p=await Notification.requestPermission(); if(p==='granted'){ el.notify.textContent='התרעות הופעלו'; el.notify.disabled=true; toast('התרעות הופעלו') } });
-el.exportBtn.addEventListener('click', ()=>{
-const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='watchlist_backup.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-});
-el.importFile.addEventListener('change', async e=>{
-const f=e.target.files?.[0]; if(!f) return;
-try{ const txt=await f.text(); const j=JSON.parse(txt); if(!j.items) throw 0; state=j; save(); render(); quotes(); periodicDetails(); }
-catch{ toast('יבוא נכשל') } e.target.value='';
-});
-el.tbody.addEventListener('click', e=>{
-const name=e.target.closest('.nameCell'); if(name){ const sym=name.getAttribute('data-sym'); if(!state.details[sym]) details([sym]).then(()=>openDrawer(sym)); else openDrawer(sym); return; }
-const b=e.target.closest('button'); if(!b) return; const sym=b.getAttribute('data-sym'), act=b.getAttribute('data-act');
-if(act==='del'){ if(confirm(`למחוק את ${sym}?`)) removeRow(sym); return }
-if(act==='save'){ const r=b.closest('tr'); const it=state.items.find(x=>x.symbol===sym); if(!it) return;
-it.upper=r.querySelector('input[data-bind="upper"]').value;
-it.lower=r.querySelector('input[data-bind="lower"]').value;
-it.note=r.querySelector('textarea[data-bind="note"]').value;
-it.thType=r.querySelector('select[data-bind="thType"]').value;
-save(); render(); toast('נשמר'); return;
-}
-if(act==='refreshDetails'){ details([sym]); return }
-if(act==='info'){ if(!state.details[sym]) details([sym]).then(()=>openDrawer(sym)); else openDrawer(sym); }
-});
-el.tbody.addEventListener('change', e=>{
-const sel=e.target.closest('select[data-bind]'); if(!sel) return; const sym=sel.getAttribute('data-sym'); const it=state.items.find(x=>x.symbol===sym); if(!it) return; it[sel.getAttribute('data-bind')]=sel.value; save();
-});
-el.search.addEventListener('input', render);
-el.sort.addEventListener('click', ()=>{ state.items.sort((a,b)=>{ const qa=state.lastPrices[a.symbol]?.regularMarketChangePercent ?? -1e9; const qb=state.lastPrices[b.symbol]?.regularMarketChangePercent ?? -1e9; return qb-qa }); render() });
-
-// Proxy UI
-function updateProxyUI(){ const s=localStorage.getItem(LS_PROXY); el.proxyBtn.textContent='פרוקסי: '+(s?(s==='on'?'מופעל':'כבוי'):'אוטו') }
-el.proxyBtn.addEventListener('click', ()=>{
-const s=localStorage.getItem(LS_PROXY);
-if(!s){ localStorage.setItem(LS_PROXY,'on'); forceProxy=true; toast('פרוקסי הופעל') }
-else if(s==='on'){ localStorage.setItem(LS_PROXY,'off'); forceProxy=false; toast('פרוקסי כובה') }
-else { localStorage.removeItem(LS_PROXY); forceProxy=FROM_FILE; toast('פרוקסי על אוטו') }
-updateProxyUI(); quotes(); periodicDetails();
-});
-el.avKey.value = localStorage.getItem(LS_AV)||''; el.avKey.addEventListener('change',()=>localStorage.setItem(LS_AV,el.avKey.value.trim()));
+el.add.addEventListener('click',()=>{const syms=parseSyms(el.sym.value.toUpperCase()); if(!syms.length)return; for(const s of syms) upsert(s,(el.name.value||'').toUpperCase(),el.upper.value,el.lower.value,el.note.value.trim(),el.th.value); el.sym.value=''; el.name.value=''; el.upper.value=''; el.lower.value=''; el.note.value='';});
+el.refresh.addEventListener('click',()=>{quotes(); refreshDetails()});
+el.apply.addEventListener('click',()=>{REFRESH=Math.max(1000,parseInt(el.interval.value||'1',10)*1000); clearInterval(t); t=setInterval(()=>{quotes(); refreshDetails()},REFRESH); quotes();});
+el.notify.addEventListener('click',async()=>{if(!('Notification'in window)){toast('אין תמיכה בהתראות');return} const p=await Notification.requestPermission(); if(p==='granted'){el.notify.textContent='התרעות הופעלו'; el.notify.disabled=true; toast('התרעות הופעלו')}})
+el.exportBtn.addEventListener('click',()=>{const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download='watchlist_backup.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u);});
+el.importFile.addEventListener('change',async e=>{const f=e.target.files?.[0]; if(!f)return; try{const t=await f.text(); const j=JSON.parse(t); if(!j.items) throw 0; state=j; save(); render(); quotes(); refreshDetails();}catch{toast('יבוא נכשל')} e.target.value='';});
+el.tbody.addEventListener('click',e=>{const name=e.target.closest('.nameCell'); if(name){openDrawer(name.dataset.sym); return} const b=e.target.closest('button'); if(!b) return; const sym=b.dataset.sym, act=b.dataset.act; if(act==='del'){if(confirm(`למחוק את ${sym}?`)) removeRow(sym); return} if(act==='save'){const r=b.closest('tr'); const it=state.items.find(x=>x.symbol===sym); if(!it)return; it.upper=r.querySelector('input[data-bind="upper"]').value; it.lower=r.querySelector('input[data-bind="lower"]').value; it.note=r.querySelector('textarea[data-bind="note"]').value; it.thType=r.querySelector('select[data-bind="thType"]').value; save(); render(); toast('נשמר'); return} if(act==='refreshDetails'){details([sym]); return} if(act==='info'){openDrawer(sym)}});
+el.tbody.addEventListener('change',e=>{const sel=e.target.closest('select[data-bind]'); if(!sel)return; const sym=sel.dataset.sym; const it=state.items.find(x=>x.symbol===sym); if(!it)return; it[sel.getAttribute('data-bind')]=sel.value; save();});
+$('searchInput').addEventListener('input',render);
+$('sortChangeBtn').addEventListener('click',()=>{state.items.sort((a,b)=>{const qa=state.lastPrices[a.symbol]?.regularMarketChangePercent ?? -1e9; const qb=state.lastPrices[b.symbol]?.regularMarketChangePercent ?? -1e9; return qb-qa}); render()});
+function updateProxyUI(){const s=localStorage.getItem(LS_PROXY); el.proxy.textContent='פרוקסי: '+(s?(s==='on'?'מופעל':'כבוי'):'אוטו')}
+el.proxy.addEventListener('click',()=>{const s=localStorage.getItem(LS_PROXY); if(!s){localStorage.setItem(LS_PROXY,'on'); forceProxy=true; toast('פרוקסי הופעל')} else if(s==='on'){localStorage.setItem(LS_PROXY,'off'); forceProxy=false; toast('פרוקסי כובה')} else {localStorage.removeItem(LS_PROXY); forceProxy=FROM_FILE||ON_GHPAGES; toast('פרוקסי על אוטו')} updateProxyUI(); quotes(); refreshDetails();});
+el.avKey.value=localStorage.getItem(LS_AV)||''; el.avKey.addEventListener('change',()=>localStorage.setItem(LS_AV,el.avKey.value.trim()));
 
 // Init
-render(); if(state.items.length){ quotes(); details() }
-updateProxyUI();
-timer=setInterval(()=>{ quotes(); periodicDetails() }, REFRESH_MS);
-
-// האטה אוטומטית אם יש עומס פריטים
-setInterval(()=>{ const n=state.items.length; if(n>80 && REFRESH_MS<3000){ REFRESH_MS=3000; clearInterval(timer); timer=setInterval(()=>{quotes(); periodicDetails()},REFRESH_MS); el.kLoad.textContent='רענון 3 שניות בגלל עומס' } },5000);
+render(); if(state.items.length){quotes(); details()}
+updateProxyUI(); t=setInterval(()=>{quotes(); refreshDetails()},REFRESH);
 })();
 </script>
-</body>
-</html>
+</body></html>
