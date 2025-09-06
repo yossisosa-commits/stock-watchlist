@@ -102,7 +102,13 @@ window.__watchlistVersion='7.2';
 // ===== Providers / proxies =====
 const ON_GHPAGES = /github\.io$/.test(location.hostname);
 const FROM_FILE = location.protocol==='file:';
-const PROXIES=['https://cors.isomorphic-git.org/','https://api.allorigins.win/raw?url=','https://thingproxy.freeboard.io/fetch/'];
+const PROXIES = [
+'https://r.jina.ai/https://', // פרוקסי 1
+'https://r.jina.ai/http://', // פרוקסי 2
+'https://cors.isomorphic-git.org/',
+'https://api.allorigins.win/raw?url=',
+'https://thingproxy.freeboard.io/fetch/'
+];
 const apis={
 yQ: syms=>`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(syms)}`,
 yS: sym=>`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=`+[
@@ -253,3 +259,4 @@ updateProxyUI(); t=setInterval(()=>{quotes(); refreshDetails()},REFRESH);
 })();
 </script>
 </body></html>
+
