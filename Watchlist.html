@@ -3,6 +3,334 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>רשימת מעקב מניות · Compact</title>
+<style>
+:root{--bg:#0b1020;--surface:#101838;--panel:#0c1430;--ink:#e9eef7;--muted:#a4b3c6;--line:#22345a;
+--brand:#3b82f6;--ok:#16c784;--bad:#ef4444;--warn:#f59e0b}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial}
+a{color:#60a5fa;text-decoration:none}
+header{position:sticky;top:0;z-index:40;background:rgba(11,16,32,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;gap:10px;align-items:center;padding:10px 14px}
+h1{margin:0;font-size:17px}
+.controls{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,button,textarea{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:14px}
+button{cursor:pointer}button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+small.muted{color:var(--muted);font-size:12px}
+main{height:calc(100vh - 56px);padding:12px}
+.layout{display:grid;grid-template-columns:7fr 5fr;gap:12px;height:100%}
+@media(max-width:1366px){.layout{grid-template-columns:1fr}.controls{gap:6px}}
+.card{background:linear-gradient(180deg,var(--surface),#0c152c);border:1px solid var(--line);border-radius:14px;padding:12px;height:100%}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.k{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
+.k .l{font-size:12px;color:var(--muted)} .k .v{margin-top:4px;font-weight:700}
+.tablewrap{display:flex;flex-direction:column;height:100%}
+.tbl{flex:1;overflow:auto;border-radius:10px;border:1px solid var(--line);background:var(--panel)}
+table{min-width:980px;width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border-bottom:1px solid var(--line);padding:10px;text-align:center;vertical-align:middle}
+th{position:sticky;top:0;background:var(--surface);font-size:12px;color:var(--muted);z-index:1}
+th:nth-child(1),td:nth-child(1){width:90px} /* סימבול */
+th:nth-child(2),td:nth-child(2){width:220px;text-align:start} /* שם */
+th:nth-child(3),td:nth-child(3){width:110px}
+th:nth-child(4),td:nth-child(4){width:120px}
+th:nth-child(5),td:nth-child(5){width:140px} /* שווי שוק */
+th:nth-child(6),td:nth-child(6){width:120px}
+th:nth-child(7),td:nth-child(7){width:210px}
+th:nth-child(8),td:nth-child(8){width:150px}
+th:nth-child(9),td:nth-child(9){width:130px}
+@media(max-width:1366px){
+th:nth-child(5),td:nth-child(5){display:none} /* מסתיר שווי שוק במסכים קטנים */
+}
+.nameCell{cursor:pointer}
+textarea{min-height:50px;width:100%;resize:vertical}
+.row-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+canvas.spark{width:140px;height:36px;display:block;margin:auto}
+.chg.pos{color:var(--ok)} .chg.neg{color:var(--bad)}
+.status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--bad)}
+/* right */
+.group{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.group h3{margin:0 0 8px 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.full{grid-column:1 / -1}
+.big-cta{width:100%;padding:10px 12px;font-weight:700}
+.muted{color:var(--muted)}
+.banner{display:none;margin-top:8px;padding:8px;border:1px solid var(--warn);background:#2b1f05;color:#ffd89d;border-radius:10px}
+.banner.show{display:block}
+.toast{position:fixed;inset-block-end:14px;inset-inline-start:14px;background:var(--panel);border:1px solid var(--line);padding:8px 10px;border-radius:10px;font-size:12px;display:none;z-index:90}
+</style>
+</head>
+<body>
+<header>
+<div class="hbar">
+<h1>רשימת מעקב מניות · Compact</h1>
+<div class="controls">
+<input id="search" placeholder="חיפוש סימול או שם"/>
+<button id="sortChange">מיין שינוי</button>
+<label class="muted">תדירות <input id="interval" type="number" min="5" step="1" value="15" style="width:66px;direction:ltr"></label>
+<button id="apply">החל</button>
+<button id="refresh">רענון</button>
+<button id="export">יצוא</button>
+<label for="import" style="display:inline-flex;gap:6px;cursor:pointer">יבוא<input id="import" type="file" accept="application/json" style="display:none"></label>
+<div style="display:flex;flex-direction:column;gap:4px">
+<input id="avKey" placeholder="Alpha Vantage API Key" style="width:240px"/>
+<small class="muted">אין מפתח/נגמרה מכסה? <a href="https://www.alphavantage.co/support/#api-key" target="_blank" rel="noopener">קבל מפתח</a></small>
+</div>
+<button id="probe">בדיקת API</button>
+</div>
+</div>
+</header>
+
+<main>
+<div class="layout">
+<!-- LEFT -->
+<section class="card tablewrap">
+<div class="kpis">
+<div class="k"><div class="l">סהכ מניות</div><div class="v" id="kCount">0</div></div>
+<div class="k"><div class="l">חציות פעילות</div><div class="v" id="kAlerts">0</div></div>
+<div class="k"><div class="l">עודכן בהצלחה</div><div class="v" id="kLastOk">-</div></div>
+<div class="k"><div class="l">סטטוס</div><div class="v" id="kStatus">מוכן</div></div>
+</div>
+<div class="tbl">
+<table>
+<thead><tr>
+<th>סימול</th><th>שם</th><th>מחיר</th><th>שינוי</th><th>שווי שוק</th>
+<th>סטטוס</th><th>הערות</th><th>מיני גרף</th><th>פעולות</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<div id="limitBanner" class="banner"></div>
+</section>
+
+<!-- RIGHT -->
+<aside class="card">
+<div class="group">
+<h3>הוספת מניה</h3>
+<div class="row2">
+<label>סימול <input id="sym" placeholder="NVDA, MSFT, AAPL"></label>
+<label>שם ידידותי (uppercase) <input id="nm" placeholder="לא חובה"></label>
+</div>
+<div class="row2">
+<label class="full">הערה <input id="note" placeholder="סיבה, טריגרים, רעיונות"/></label>
+</div>
+<div class="row3">
+<label>סוג סף
+<select id="thrType">
+<option value="price">מחיר</option>
+<option value="percent">אחוז יומי</option>
+</select>
+</label>
+<label>סף עליון <input id="up" type="number" step="0.01" placeholder="לא חובה"></label>
+<label>סף תחתון <input id="lo" type="number" step="0.01" placeholder="לא חובה"></label>
+</div>
+<button id="add" class="primary big-cta">הוסף לרשימה</button>
+</div>
+
+<div class="group">
+<h3 id="dTitle">פרטי חברה</h3>
+<div class="muted" id="dBadges" style="margin-bottom:6px"></div>
+<div class="muted" id="dSummary" style="line-height:1.6">בחר שורה ולחץ “פרטים”.</div>
+<div class="muted" id="dProfile" style="margin-top:8px"></div>
+<div class="muted" id="dFinancials" style="margin-top:6px"></div>
+<div class="muted" id="dEarnings" style="margin-top:6px"></div>
+</div>
+</aside>
+</div>
+</main>
+
+<div class="toast" id="toast"></div>
+<audio id="beep" preload="auto"><source type="audio/wav" src="data:audio/wav;base64,UklGRl4AAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYAZGF0YQAAAEAAAAD//wAA//8AAP//AAD//wAA"></audio>
+
+<script>
+(function(){
+// ----- state -----
+const LS='compact.v1', LS_AV='compact.avkey', LS_RATE='compact.rate';
+const DEFAULT_AV='5RE9BCQFPV4AE8OR';
+let REFRESH=15000, timer=null, lastOk='-', lastErr=null;
+
+const today=new Date().toISOString().slice(0,10);
+let rate=JSON.parse(localStorage.getItem(LS_RATE)||'{}');
+if(rate.day!==today){ rate={day:today,calls:0}; localStorage.setItem(LS_RATE,JSON.stringify(rate)) }
+
+let state=load()||{items:[],prices:{},details:{},spark:{}};
+const $=id=>document.getElementById(id);
+const el={tbody:$('tbody'),kCount:$('kCount'),kAlerts:$('kAlerts'),kLastOk:$('kLastOk'),kStatus:$('kStatus'),
+search:$('search'),sort:$('sortChange'),refresh:$('refresh'),interval:$('interval'),apply:$('apply'),
+export:$('export'),import:$('import'),probe:$('probe'),
+sym:$('sym'),nm:$('nm'),note:$('note'),thr:$('thrType'),up:$('up'),lo:$('lo'),add:$('add'),
+avKey:$('avKey'),banner:$('limitBanner'),
+dTitle:$('dTitle'),dBadges:$('dBadges'),dSummary:$('dSummary'),dProfile:$('dProfile'),dFinancials:$('dFinancials'),dEarnings:$('dEarnings'),
+beep:$('beep'),toast:$('toast')};
+
+// ----- utils -----
+function save(){localStorage.setItem(LS,JSON.stringify(state))}
+function load(){try{return JSON.parse(localStorage.getItem(LS))}catch{return null}}
+const fmt=(n,dp=2)=>(n==null||isNaN(n))?'-':Number(n).toLocaleString('en-US',{maximumFractionDigits:dp});
+function cap(n){if(!n||n<=0)return'-';const u=[['T',1e12],['B',1e9],['M',1e6]];for(const[s,v] of u){if(n>=v)return(n/v).toFixed(2)+s}return fmt(n,0)}
+const now=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const esc=t=>t?t.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])):'';
+function toast(m){el.toast.textContent=m;el.toast.style.display='block';clearTimeout(el.toast._t);el.toast._t=setTimeout(()=>el.toast.style.display='none',2000)}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// ----- Alpha Vantage -----
+const RATE={perMin:25,gap:3000,maxDay:500,softWarn:450,hardSlow:490};
+function avQ(sym,key){return `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`}
+function avO(sym,key){return `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${encodeURIComponent(sym)}&apikey=${encodeURIComponent(key)}`}
+async function avFetch(url){
+if(rate.calls>=RATE.maxDay){
+el.banner.classList.add('show');
+el.banner.innerHTML='חרגה ממכסת 500 להיום. הזן מפתח חדש. <a href="https://www.alphavantage.co/support/#api-key" target="_blank" rel="noopener">קבל מפתח</a>';
+throw new Error('daily limit reached');
+}
+if(rate.calls>=RATE.hardSlow) await sleep(6000);
+rate.calls++; localStorage.setItem(LS_RATE,JSON.stringify(rate));
+if(rate.calls===RATE.softWarn){
+el.banner.classList.add('show');
+el.banner.innerHTML='מתקרב למכסה היומית. אפשר להאט רענון או להוציא מפתח נוסף.';
+}
+const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
+return r.json();
+}
+
+// רוטציה – עד 5 סמלים לטיק
+let rot=0; function pick(){const all=state.items.map(x=>x.symbol);const MAX=5;if(all.length<=MAX)return all;const end=Math.min(rot+MAX,all.length);const part=all.slice(rot,end);rot=(end===all.length)?0:end;return part;}
+
+async function fetchPrices(list){
+const key=(el.avKey.value||localStorage.getItem(LS_AV)||DEFAULT_AV).trim();
+if(!key){lastErr='חסר API Key';el.kStatus.textContent='חסר API Key';return false}
+const syms=list&&list.length?list:pick(); if(!syms.length)return false;
+let any=false;
+for(const s of syms){
+try{
+const j=await avFetch(avQ(s,key)); const d=j['Global Quote']||{};
+const price=Number(d['05. price']), open=Number(d['02. open']);
+const chg=isFinite(Number(d['09. change']))?Number(d['09. change']):(isFinite(price-open)?price-open:0);
+const chgp=isFinite(parseFloat((d['10. change percent']||'').replace('%','')))?parseFloat((d['10. change percent']||'').replace('%','')):(isFinite(open)&&open?((price-open)/open*100):0);
+state.prices[s]={symbol:s,regularMarketPrice:price,regularMarketChange:chg,regularMarketChangePercent:chgp,marketCap:null};
+pushSpark(s,price); any=true;
+}catch(e){lastErr='AV '+e.message}
+}
+if(any){lastOk=now();save()}
+return any;
+}
+
+const DETAILS_MS=300000;
+async function fetchOverview(list){
+const key=(el.avKey.value||localStorage.getItem(LS_AV)||DEFAULT_AV).trim(); if(!key)return;
+const arr=list&&list.length?list:state.items.map(x=>x.symbol);
+for(const s of arr){
+const d=state.details[s]; if(d && Date.now()-d._ts<DETAILS_MS) continue;
+try{
+const j=await avFetch(avO(s,key));
+state.details[s]={_ts:Date.now(),
+profile:{longBusinessSummary:j.Description||'',sector:j.Sector||'',industry:j.Industry||''},
+stats:{trailingPE:num(j.PERatio),forwardPE:num(j.ForwardPE),beta:num(j.Beta)},
+fin:{totalRevenue:num(j.RevenueTTM),dividendYield:num(j.DividendYield),analystTarget:num(j.AnalystTargetPrice)},
+earn:{lastQ:{date:j.LatestQuarter||'',actual:num(j.EPS)}}
+};
+save();
+}catch(e){lastErr='AV '+e.message}
+await sleep(200);
+}
+}
+function num(x){const n=Number(x);return isFinite(n)?n:null}
+
+// גרף+התראות
+function pushSpark(sym,p){if(!isFinite(p))return;const a=state.spark[sym]||[];a.push(+p);while(a.length>160)a.shift();state.spark[sym]=a}
+function drawSpark(cv,pts){if(!cv)return;const c=cv.getContext('2d'),w=cv.width,h=cv.height;c.clearRect(0,0,w,h);if(!pts||pts.length<2)return;const mn=Math.min(...pts),mx=Math.max(...pts),rg=(mx-mn)||1;c.beginPath();for(let i=0;i<pts.length;i++){const x=i*(w/(pts.length-1)),y=h-((pts[i]-mn)/rg)*h;i?c.lineTo(x,y):c.moveTo(x,y)}c.lineWidth=1.5;c.strokeStyle='#60a5fa';c.stroke()}
+function checkAlerts(){let hits=0;for(const it of state.items){const q=state.prices[it.symbol];if(!q)continue;const pct=q.regularMarketChangePercent,p=q.regularMarketPrice;let hit='';if((it.thType||'price')==='percent'){if(it.upper!==''&&pct>=+it.upper)hit='upper';if(it.lower!==''&&pct<=+it.lower)hit='lower'}else{if(it.upper!==''&&p>=+it.upper)hit='upper';if(it.lower!==''&&p<=+it.lower)hit='lower'}if(hit)hits++}el.kAlerts.textContent=hits}
+
+// UI
+function render(){
+el.tbody.innerHTML='';
+const term=el.search.value.trim().toLowerCase();
+for(const it of state.items){
+const d=state.details[it.symbol], sum=(d?.profile?.longBusinessSummary||'').toLowerCase();
+if(term && !(it.symbol.toLowerCase().includes(term)||(it.name||'').toLowerCase().includes(term)||sum.includes(term))) continue;
+const q=state.prices[it.symbol]||{};
+const ch=(q.regularMarketChangePercent||0)>=0?'pos':'neg';
+const st=(()=>{if(!isFinite(q.regularMarketPrice))return{c:'',t:'ממתין'};const isPct=(it.thType||'price')==='percent';if(isPct){const u=+it.upper,l=+it.lower,pct=q.regularMarketChangePercent;if(!isNaN(u)&&pct>=u)return{c:'bad',t:'אחוז מעל'};if(!isNaN(l)&&pct<=l)return{c:'warn',t:'אחוז מתחת'};return{c:'ok',t:'בטווח'}}const p=q.regularMarketPrice,u=+it.upper,l=+it.lower;if(!isNaN(u)&&p>=u)return{c:'bad',t:'חצה עליון'};if(!isNaN(l)&&p<=l)return{c:'warn',t:'חצה תחתון'};return{c:'ok',t:'בטווח'}})();
+
+const tr=document.createElement('tr'); tr.dataset.sym=it.symbol;
+tr.innerHTML=`<td><a target="_blank" rel="noopener" href="https://finance.yahoo.com/quote/${it.symbol}">${it.symbol}</a></td>
+<td class="nameCell">${it.name||it.symbol}</td>
+<td>${fmt(q.regularMarketPrice)}</td>
+<td class="chg ${ch}">${fmt(q.regularMarketChange)} (${fmt(q.regularMarketChangePercent,2)}%)</td>
+<td>${cap(q.marketCap)}</td>
+<td class="status ${st.c}">${st.t}</td>
+<td><textarea class="muted" data-bind="note">${it.note||''}</textarea></td>
+<td><canvas class="spark" width="140" height="36"></canvas></td>
+<td class="row-actions"><button data-act="info">פרטים</button><button data-act="save">שמור</button><button data-act="del">מחק</button></td>`;
+el.tbody.appendChild(tr);
+drawSpark(tr.querySelector('canvas.spark'),state.spark[it.symbol]||[]);
+}
+el.kCount.textContent=state.items.length;
+el.kLastOk.textContent=lastOk;
+el.kStatus.textContent= lastErr?('שגיאת בקשות: '+lastErr):'תקין';
+}
+
+function fillDetails(sym){
+const q=state.prices[sym]||{}, d=state.details[sym]||{}, it=state.items.find(x=>x.symbol===sym)||{};
+el.dTitle.textContent=`${sym} · ${it.name||''}`;
+el.dBadges.innerHTML=`מחיר ${fmt(q.regularMarketPrice)} · שינוי ${fmt(q.regularMarketChangePercent,2)}%`;
+el.dSummary.textContent=(d?.profile?.longBusinessSummary||'אין תקציר');
+el.dProfile.innerHTML=`סקטור: <b>${d?.profile?.sector||'-'}</b> · תעשייה: <b>${d?.profile?.industry||'-'}</b>`;
+el.dFinancials.innerHTML=`PE: <b>${d?.stats?.trailingPE!=null?fmt(d.stats.trailingPE,2):'-'}</b> · PE עתידי: <b>${d?.stats?.forwardPE!=null?fmt(d.stats.forwardPE,2):'-'}</b> · בטא: <b>${d?.stats?.beta!=null?fmt(d.stats.beta,2):'-'}</b> · יעד: <b>${d?.fin?.analystTarget!=null?fmt(d.fin.analystTarget,2):'-'}</b>`;
+el.dEarnings.innerHTML=`רבעון אחרון: <b>${d?.earn?.lastQ?.date||'-'}</b> · EPS: <b>${d?.earn?.lastQ?.actual!=null?fmt(d.earn.lastQ.actual,2):'-'}</b>`;
+}
+
+// events
+el.tbody.addEventListener('click',e=>{
+const tr=e.target.closest('tr'); if(!tr) return; const sym=tr.dataset.sym;
+const b=e.target.closest('button'); const act=b?.dataset.act||'row';
+if(act==='del'){ if(confirm(`למחוק את ${sym}?`)){ state.items=state.items.filter(x=>x.symbol!==sym); save(); render(); } return }
+if(act==='save'){ const it=state.items.find(x=>x.symbol===sym); it.note=tr.querySelector('textarea[data-bind="note"]').value; save(); toast('נשמר'); return }
+// פרטים
+fillDetails(sym); fetchOverview([sym]);
+});
+
+$('add').addEventListener('click',()=>{
+const syms=el.sym.value.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+const name=(el.nm.value||'').toUpperCase();
+for(const s of syms){
+const i=state.items.findIndex(x=>x.symbol===s);
+const base={symbol:s,name, note:el.note.value||'', upper:el.up.value||'', lower:el.lo.value||'', thType:el.thr.value||'price'};
+if(i>=0) state.items[i]={...state.items[i],...base}; else state.items.push(base);
+fetchPrices([s]); fetchOverview([s]);
+}
+el.sym.value=''; el.nm.value=''; el.note.value=''; el.up.value=''; el.lo.value='';
+save(); render();
+});
+
+el.sort.addEventListener('click',()=>{state.items.sort((a,b)=>{const qa=state.prices[a.symbol]?.regularMarketChangePercent??-1e9;const qb=state.prices[b.symbol]?.regularMarketChangePercent??-1e9;return qb-qa});render()});
+el.search.addEventListener('input',render);
+el.refresh.addEventListener('click',async()=>{const ok=await fetchPrices(); if(ok){lastErr=null;fetchOverview()} render(); checkAlerts()});
+el.apply.addEventListener('click',()=>{const n=Math.max(5,parseInt(el.interval.value||'15',10));REFRESH=n*1000;clearInterval(timer);timer=setInterval(tick,REFRESH);toast('תדירות עודכנה ל '+n+' שניות')});
+el.export.addEventListener('click',()=>{const b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='watchlist_backup.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)});
+el.import.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const t=await f.text();const j=JSON.parse(t);if(!j.items)throw 0;state=j;save();render()}catch{toast('יבוא נכשל')}e.target.value=''});
+el.probe.addEventListener('click',async()=>{const k=(el.avKey.value||localStorage.getItem(LS_AV)||DEFAULT_AV).trim();try{const r=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=${encodeURIComponent(k)}`,{cache:'no-store'});const j=await r.json();toast(j['Global Quote']?'API תקין':'אין נתונים – בדוק KEY/מכסה');}catch{toast('בדיקה נכשלה')}});
+
+el.avKey.value=localStorage.getItem(LS_AV)||DEFAULT_AV;
+el.avKey.addEventListener('change',()=>localStorage.setItem(LS_AV,el.avKey.value.trim()));
+
+async function tick(){const ok=await fetchPrices(); if(ok){lastErr=null;fetchOverview()} render(); checkAlerts()}
+
+// init
+render(); if(state.items.length){tick()} timer=setInterval(tick,REFRESH);
+})();
+</script>
+</body>
+</html>
+
+
+בתאריך יום ב׳, 8 בספט׳ 2025 ב-23:34 מאת Yossi Sosa <yossi.sosa@gmail.com>:
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>רשימת מעקב מניות · Nova UI</title>
 <style>
 :root{
