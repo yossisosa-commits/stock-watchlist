@@ -3,17 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>רשימת מעקב מניות · Pro+ v2</title>
+<title>רשימת מעקב מניות · Pro+ v2.1</title>
 <style>
-  :root{
-    --bg:#0b1016; --panel:#111824; --text:#e6eef6; --muted:#8aa0b5;
-    --primary:#4cc2ff; --danger:#ff5d6c; --success:#3fd080; --warn:#ffb347;
-    --border:#243041; --chip:#1b2633; --row-hover:#0f1620; --accent:#7dd3fc;
-    --font: Inter,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;
-  }
-  @media (prefers-color-scheme: light){
-    :root{ --bg:#f7f9fc; --panel:#fff; --text:#0b2239; --muted:#5b7083; --primary:#0078d4; --danger:#c5221f; --success:#0f9d58; --warn:#b7791f; --border:#e6eef6; --chip:#f2f6fb; --row-hover:#f6f9ff; --accent:#0078d4; }
-  }
+  :root{ --bg:#0b1016; --panel:#111824; --text:#e6eef6; --muted:#8aa0b5; --primary:#4cc2ff; --danger:#ff5d6c; --success:#3fd080; --warn:#ffb347; --border:#243041; --chip:#1b2633; --row-hover:#0f1620; --accent:#7dd3fc; --font: Inter,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif; }
+  @media (prefers-color-scheme: light){ :root{ --bg:#f7f9fc; --panel:#fff; --text:#0b2239; --muted:#5b7083; --primary:#0078d4; --danger:#c5221f; --success:#0f9d58; --warn:#b7791f; --border:#e6eef6; --chip:#f2f6fb; --row-hover:#f6f9ff; --accent:#0078d4; } }
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.45}
   .app{max-width:100%;margin-inline:auto;padding:16px;display:grid;gap:16px;grid-template-rows:auto auto 1fr auto}
@@ -37,7 +30,7 @@
   .ok{background:var(--success)} .bad{background:var(--danger)} .warnc{background:var(--warn)}
   .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .table-wrap{overflow:auto;border-radius:12px;border:1px solid var(--border)}
-  table{border-collapse:separate;border-spacing:0;width:100%;min-width:1150px;background:var(--panel)}
+  table{border-collapse:separate;border-spacing:0;width:100%;min-width:1120px;background:var(--panel)}
   thead th{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--border);cursor:pointer}
   th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
   tbody tr:hover{background:var(--row-hover)}
@@ -68,7 +61,7 @@
 <div class="app">
   <header class="panel" id="top">
     <div class="row">
-      <h1>רשימת מעקב מניות · Pro+ v2</h1>
+      <h1>רשימת מעקב מניות · Pro+ v2.1</h1>
       <span class="pill">סטטוס: <span id="sysStatus">מוכן</span></span>
       <span class="pill">סה״כ: <b id="countTotal">0</b></span>
       <span class="pill">חציות: <b id="countAlerts">0</b></span>
@@ -131,7 +124,7 @@
       <div class="status-dot warnc" id="dotWARN" style="display:none"></div>
       <div class="status-dot bad" id="dotBAD" style="display:none"></div>
       <span id="statusText" class="muted">מוכן</span>
-      <span class="right muted">טיפ: פרטי חברה נשמרים במטמון לכל מניה.</span>
+      <span class="right muted">טיפ: פרטי חברה נשמרים במטמון לכל מניה. בדוק הגדרות ב‑⚙️ אם מופיעה שגיאת API.</span>
     </div>
   </section>
 
@@ -182,7 +175,7 @@
     </div>
   </dialog>
 
-  <!-- Details Modal (with cache + refresh) -->
+  <!-- Details Modal (cached) -->
   <dialog id="dlg">
     <div class="modal-head">
       <strong id="dlgTitle">פרטים</strong>
@@ -201,14 +194,20 @@
 </div>
 
 <script>
-/* ===== Storage ===== */
-const STORAGE_KEY='watchlist.pro.plus.v2';
+/* ===== Storage + Migration ===== */
+const STORAGE_KEY='watchlist.pro.plus.v2.1';
 const DEFAULTS={
   settings:{ provider:'fh', keys:{av:'',fh:'',td:''}, refreshSec:15, updateFrom:8, updateTo:23, strictBudget:true, dailyBudget:5000, notifyDesktop:true, notifySound:true, dndFrom:22, dndTo:7 },
   usage:{date:'',count:0}, items:{}, alerts:[], sort:{k:'symbol',dir:'asc'}
 };
-const db=load();
+const db=load(); tryMigrate(); save();
 function load(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return structuredClone(DEFAULTS); const p=JSON.parse(raw); p.settings ||= DEFAULTS.settings; p.settings.keys ||= {av:'',fh:'',td:''}; p.usage ||= {date:'',count:0}; p.items ||= {}; p.alerts ||= []; p.sort ||= {k:'symbol',dir:'asc'}; return p; }catch{ return structuredClone(DEFAULTS); } }
+function tryMigrate(){
+  // נסה להביא מפתחות מסבבים קודמים כדי שלא תצטרך להזין שוב
+  const keys = db.settings.keys;
+  const legacyKeys = ['watchlist.pro.plus.v2','watchlist.pro.plus.v1','watchlist.pro.v1','watchlist.v3'];
+  for(const k of legacyKeys){ try{ const raw=localStorage.getItem(k); if(!raw) continue; const old=JSON.parse(raw); if(old?.settings?.keys){ keys.av ||= old.settings.keys.av||''; keys.fh ||= old.settings.keys.fh||''; keys.td ||= old.settings.keys.td||''; } if(!db.settings.provider && old?.settings?.provider) db.settings.provider=old.settings.provider; }catch{} }
+}
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
 
 /* ===== Utils ===== */
@@ -225,11 +224,6 @@ function isDND(){ const f=parseInt($('#dndFrom').value||db.settings.dndFrom,10),
 function playBeep(){ if(!db.settings.notifySound) return; try{ const c=new (window.AudioContext||window.webkitAudioContext)(); const o=c.createOscillator(), g=c.createGain(); o.type='sine'; o.frequency.value=880; g.gain.value=0.0001; o.connect(g); g.connect(c.destination); o.start(); const n=c.currentTime; g.gain.exponentialRampToValueAtTime(0.05,n+0.01); g.gain.exponentialRampToValueAtTime(0.00001,n+0.25); o.stop(n+0.3);}catch{} }
 function notifyUser(title, body){ if(db.settings.notifyDesktop && !isDND() && 'Notification'in window){ if(Notification.permission==='granted') new Notification(title,{body}); else if(Notification.permission==='default') Notification.requestPermission().then(p=>{ if(p==='granted') new Notification(title,{body}); }); } if(!isDND() && db.settings.notifySound) playBeep(); }
 
-/* ===== Budget ===== */
-function resetDailyUsageIfNeeded(){ const today=new Date().toISOString().slice(0,10); if(db.usage.date!==today){ db.usage.date=today; db.usage.count=0; save(); } }
-function incDailyUsage(){ resetDailyUsageIfNeeded(); db.usage.count++; save(); updateUsagePill(); }
-function updateUsagePill(){ $('#dailyCap').textContent=db.settings.dailyBudget; }
-
 /* ===== Provider API ===== */
 const Provider=(()=>{ let queue=Promise.resolve(), last=0; function getKey(){ return db.settings.provider==='av'?db.settings.keys.av:db.settings.provider==='fh'?db.settings.keys.fh:db.settings.keys.td; }
 function minSpacing(){ const p=db.settings.provider; if(p==='av') return 12500; if(p==='td') return 8500; return 1200; }
@@ -244,6 +238,10 @@ return {
   intraday:(symbol)=> db.settings.provider==='fh'? schedule(()=>requestFH('/stock/candle',{symbol,resolution:'5',from:Math.floor(Date.now()/1000)-60*60*24,to:Math.floor(Date.now()/1000)})) : db.settings.provider==='td'? schedule(()=>requestTD('/time_series',{symbol,interval:'5min',outputsize:'120'})) : schedule(()=>requestAV({function:'TIME_SERIES_INTRADAY',symbol,interval:'5min',outputsize:'compact',extended_hours:'true'})),
   profile:(symbol)=> db.settings.provider==='fh'? schedule(()=>requestFH('/stock/profile2',{symbol})) : db.settings.provider==='td'? schedule(()=>requestTD('/profile',{symbol})) : schedule(()=>requestAV({function:'OVERVIEW',symbol}))
 };})();
+
+/* ===== Usage/Budget ===== */
+function resetDailyUsageIfNeeded(){ const today=new Date().toISOString().slice(0,10); if(db.usage.date!==today){ db.usage.date=today; db.usage.count=0; save(); } }
+function incDailyUsage(){ resetDailyUsageIfNeeded(); db.usage.count++; save(); }
 
 /* ===== Render Table ===== */
 function render(){ const tbody=$('#tbody'); tbody.innerHTML=''; const syms=Object.keys(db.items); $('#countTotal').textContent=syms.length; syms.sort((a,b)=>compareRows(db.items[a],db.items[b],db.sort)); let active=0; for(const sym of syms){ const it=db.items[sym]; const last=it.last||{}; const sess=it.sessions||{}; const chg=last.changePct; const hasCross=last.cross?.length>0; const tr=document.createElement('tr'); const nextDue=it.nextDueTs?Math.max(0,it.nextDueTs-Date.now()):0; tr.title = nextDue>0?`עדכון הבא בעוד ~${Math.ceil(nextDue/1000/60)} דק׳`:'יתעדכן בסבב הבא'; if(hasCross) active+=last.cross.length; tr.innerHTML=`
@@ -273,7 +271,7 @@ function valOrDash(v){ return v!=null?fmt.format(v):'<span class="muted">—</sp
 function compareRows(a,b,sort){ const k=sort.k, d=sort.dir==='asc'?1:-1; const gv=it=>{ if(k==='symbol') return it.sym; if(k==='name') return it.name||''; if(k==='sector') return it.sector||''; if(k==='price') return it.last?.price ?? -Infinity; if(k==='chg') return it.last?.changePct ?? -Infinity; if(k==='pre') return it.sessions?.pre?.price ?? -Infinity; if(k==='reg') return it.sessions?.reg?.price ?? -Infinity; if(k==='aft') return it.sessions?.aft?.price ?? -Infinity; if(k==='ovr') return it.sessions?.ovr?.price ?? -Infinity; if(k==='thr') return ((it.thrUpper??'')+'/'+(it.thrLower??'')); if(k==='rank') return it.rank||'mid'; if(k==='note') return it.note||''; return ''; }; const va=gv(a), vb=gv(b); if(va<vb) return -1*d; if(va>vb) return 1*d; return 0; }
 
 /* ===== Sparks ===== */
-async function drawSparks(){ const cvs=$$('#tbody .spark'); for(const c of cvs){ const sym=c.dataset.sym, it=db.items[sym]; if(!it.spark || Date.now()-(it.spark.ts||0)>60*60*1000){ try{ if(Provider.getKey()){ const s=await Provider.intraday(sym); const closes=extractCloses(s); it.spark={ts:Date.now(),closes}; save(); } }catch(e){} } if(it.spark?.closes?.length>1) paintSpark(c,it.spark.closes); } }
+async function drawSparks(){ const cvs=$$('#tbody .spark'); for(const c of cvs){ const sym=c.dataset.sym, it=db.items[sym]; if(!it.spark || Date.now()-(it.spark.ts||0)>60*60*1000){ try{ if(Provider.getKey()){ const s=await Provider.intraday(sym); const closes=extractCloses(s); it.spark={ts:Date.now(),closes}; save(); } }catch(e){ console.warn('spark fail',sym,e.message);} } if(it.spark?.closes?.length>1) paintSpark(c,it.spark.closes); } }
 function extractCloses(s){ if(s?.['Time Series (5min)']){ const ts=s['Time Series (5min)']; return Object.keys(ts).slice(0,60).reverse().map(k=>parseFloat(ts[k]['4. close'])); } else if(s?.s==='ok' && Array.isArray(s?.c)){ return s.c.slice(-60); } else if(s?.values){ return s.values.slice(0,60).reverse().map(v=>parseFloat(v.close)); } return []; }
 function paintSpark(cv,arr){ const w=cv.width=cv.clientWidth,h=cv.height=cv.clientHeight; const mn=Math.min(...arr), mx=Math.max(...arr); const pad=2,xs=(w-2*pad)/(arr.length-1), sc=v=>h-pad-((v-mn)/(mx-mn||1))*(h-2*pad); const ctx=cv.getContext('2d'); ctx.clearRect(0,0,w,h); ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent')||'#4cc2ff'; ctx.lineWidth=1.5; ctx.beginPath(); arr.forEach((v,i)=>{ const x=pad+i*xs, y=sc(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); }
 
@@ -285,17 +283,16 @@ function delItem(sym){ delete db.items[sym]; save(); render(); }
 
 /* ===== Scheduler / Auto Refresh ===== */
 let timer=null, busy=false;
-function calcSymbolIntervalSec(){ const p=db.settings.provider; const base = p==='fh'?15 : p==='td'?60 : 120; if(!db.settings.strictBudget) return base; const S=Math.max(1,Object.keys(db.items).length); const defaults={av:25,fh:5000,td:800}; const daily=db.settings.dailyBudget||defaults[p]||1000; const per=Math.max(1,Math.floor(daily/S)); const fromBudget=Math.ceil(86400/per); // clamp for Finnhub to avoid huge gaps
- if(p==='fh') return Math.min(Math.max(base, fromBudget), 300); // עד 5 דק׳
- return Math.max(base, fromBudget); }
-function start(){ applySettingsFromUI(); if(timer) clearInterval(timer); tick(); timer=setInterval(tick, (db.settings.refreshSec||15)*1000); setStatus('רענון פעיל','ok'); }
+function calcSymbolIntervalSec(){ const p=db.settings.provider; const base = p==='fh'?15 : p==='td'?60 : 120; if(!db.settings.strictBudget) return base; const S=Math.max(1,Object.keys(db.items).length); const defaults={av:25,fh:5000,td:800}; const daily=db.settings.dailyBudget||defaults[p]||1000; const per=Math.max(1,Math.floor(daily/S)); const fromBudget=Math.ceil(86400/per); if(p==='fh') return Math.min(Math.max(base, fromBudget), 300); return Math.max(base, fromBudget); }
+function start(){ applySettingsFromUI(); if(!Provider.getKey()){ setStatus('מפתח חסר/שגוי','bad'); toast('פתח הגדרות (⚙️) והדבק מפתח תקף לספק הנבחר','err'); return; } if(timer) clearInterval(timer); // הכרחת עדכון ראשוני לכל הסימולים
+ Object.values(db.items).forEach(it=>it.nextDueTs=0); save(); tick(); timer=setInterval(tick, (db.settings.refreshSec||15)*1000); setStatus('רענון פעיל','ok'); }
 function stop(){ if(timer) clearInterval(timer); timer=null; setStatus('נעצר','warn'); }
 async function tick(){ if(busy) return; busy=true; try{ if(!inUpdateWindow()){ setStatus('מחוץ לחלון עדכון','warn',true); return; } const syms=Object.keys(db.items); if(!syms.length) return; const now=Date.now(); const due=syms.map(s=>({s,due:db.items[s].nextDueTs||0})).sort((a,b)=>a.due-b.due); const batch = db.settings.provider==='fh'?2:1; for(let i=0;i<Math.min(batch,due.length);i++){ const pick=due[i].s; await refreshOne(pick); if(needSessions(db.items[pick])) await refreshSessions(pick); db.items[pick].nextDueTs = now + calcSymbolIntervalSec()*1000; } $('#lastUpdate').textContent=new Date().toLocaleString('he-IL'); } finally { save(); render(); busy=false; } }
 function needSessions(it){ return !it.sessions || (Date.now()-(it.sessions?.ts||0) > 5*60*1000); }
 $('#btnRefreshAll').onclick = ()=>{ Object.values(db.items).forEach(it=>it.nextDueTs=0); save(); tick(); };
 
-async function refreshOne(sym){ try{ if(!Provider.getKey()) throw new Error('אין מפתח'); const d=await Provider.quote(sym); let price=null, chg=null; if(db.settings.provider==='fh'){ price=d.c??null; chg=d.dp??null; } else if(db.settings.provider==='td'){ price=parseFloat(d?.price ?? d?.close ?? d?.last ?? NaN); chg=parseFloat(d?.change_percent ?? d?.percent_change ?? NaN); if(!isFinite(price) && d?.data) price=parseFloat(d.data?.[0]?.price); } else { const g=d['Global Quote']||{}; price=parseFloat(g['05. price']); chg=parseFloat((g['10. change percent']||'0').replace('%','')); } const prev=db.items[sym].last?.price ?? null; const cross=computeCrossAndZone(sym,prev,price,chg); db.items[sym].last={price,changePct:chg,cross}; setStatus('עודכן','ok',true); }catch(e){ setStatus(shortAPIErr(e),'warn'); } }
-async function refreshSessions(sym){ try{ const s=await Provider.intraday(sym); const pts=normalizeIntraday(s); const sess=splitSessions(pts); db.items[sym].sessions={ts:Date.now(),...sess}; }catch(e){} }
+async function refreshOne(sym){ try{ if(!Provider.getKey()) throw new Error('MISSING_KEY'); const d=await Provider.quote(sym); let price=null, chg=null; if(db.settings.provider==='fh'){ price=d.c??null; chg=d.dp??null; } else if(db.settings.provider==='td'){ price=parseFloat(d?.price ?? d?.close ?? d?.last ?? NaN); chg=parseFloat(d?.change_percent ?? d?.percent_change ?? NaN); if(!isFinite(price) && d?.data) price=parseFloat(d.data?.[0]?.price); } else { const g=d['Global Quote']||{}; price=parseFloat(g['05. price']); chg=parseFloat((g['10. change percent']||'0').replace('%','')); } const prev=db.items[sym].last?.price ?? null; const cross=computeCross(sym,prev,price,chg); db.items[sym].last={price,changePct:chg,cross}; setStatus('עודכן','ok',true); }catch(e){ setStatus(shortAPIErr(e),'warn'); console.warn('quote error', sym, e); } }
+async function refreshSessions(sym){ try{ const s=await Provider.intraday(sym); const pts=normalizeIntraday(s); const sess=splitSessions(pts); db.items[sym].sessions={ts:Date.now(),...sess}; }catch(e){ console.warn('sessions error', sym, e); } }
 function normalizeIntraday(s){ const arr=[]; if(s?.['Time Series (5min)']){ for(const [ts,row] of Object.entries(s['Time Series (5min)'])) arr.push({t:new Date(ts.replace(' ','T')+'Z'),c:parseFloat(row['4. close'])}); } else if(s?.s==='ok' && Array.isArray(s?.t)){ for(let i=0;i<s.t.length;i++) arr.push({t:new Date(s.t[i]*1000),c:s.c[i]}); } else if(s?.values){ for(const v of s.values) arr.push({t:new Date(v.datetime),c:parseFloat(v.close)}); } arr.sort((a,b)=>a.t-b.t); return arr; }
 function splitSessions(points){ const toNY=d=> new Date(d.toLocaleString('en-US',{timeZone:'America/New_York'})); const hm=d=>{const nd=toNY(d);return nd.getHours()*60+nd.getMinutes()}; let pre=null,reg=null,aft=null,ovr=null; const inside=(m,a,b)=>m>=a && m<b; for(const p of points){ const m=hm(p.t); if(inside(m,240,570)) pre=p; else if(inside(m,570,960)) reg=p; else if(inside(m,960,1200)) aft=p; else ovr=p; } return {pre,reg,aft,ovr}; }
 
@@ -303,24 +300,25 @@ function splitSessions(points){ const toNY=d=> new Date(d.toLocaleString('en-US'
 const dlg=$('#dlg'); $('#dlgClose').onclick=()=>dlg.close(); $('#btnRefreshProfile').onclick=()=>{ const sym=$('#dlgTitle').textContent; fetchProfile(sym,true).catch(()=>{}); };
 async function openDetails(sym){ const it=db.items[sym]; $('#dlgTitle').textContent=sym; $('#dlgSub').textContent=it.name||''; dlg.showModal(); if(it.company && it.company.data){ renderCompany(sym,it.company.data); } else { $('#ovw').textContent='טוען…'; $('#prof').textContent='—'; $('#ratios').textContent='—'; await fetchProfile(sym,false); } }
 async function fetchProfile(sym, force){ const it=db.items[sym]; if(!it) return; if(it.company && it.company.data && !force) return; try{ const o=await Provider.profile(sym); it.company={ts:Date.now(), data:o}; if(!it.sector){ const sector = db.settings.provider==='fh'?(o.finnhubIndustry||o.sector||'') : db.settings.provider==='td'?(o.sector||o.Sector||'') : (o.Sector||''); it.sector=sector||it.sector||''; } save(); renderCompany(sym,o); render(); }catch(e){ $('#ovw').innerHTML=`<span class="danger-text">שגיאה: ${escapeHtml(e.message)}</span>`; } }
-function renderCompany(sym,o){ const provider=db.settings.provider; let desc='—', prof='—', ratios='—'; if(provider==='fh'){ desc = o.name? `${escapeHtml(o.name)} – ${escapeHtml(o.finnhubIndustry||o.sector||'')}` : '—'; prof = `<div>מדינה: <b>${escapeHtml(o.country||'—')}</b></div><div>IPO: <b>${escapeHtml(o.ipo||'—')}</b></div><div>אתר: ${o.weburl?`<a href="${o.weburl}" target="_blank" rel="noopener">${o.weburl}</a>`:'—'}</div>`; ratios = `<div>Ticker: <b>${escapeHtml(o.ticker||sym)}</b></div><div>Exchange: <b>${escapeHtml(o.exchange||'—')}</b></div>`; }
- else if(provider==='td'){ desc = escapeHtml(o.description||o.name||'—'); prof = `<div>סקטור: <b>${escapeHtml(o.sector||'—')}</b></div><div>תעשייה: <b>${escapeHtml(o.industry||'—')}</b></div><div>אתר: ${o.website?`<a href="${o.website}" target="_blank" rel="noopener">${o.website}</a>`:'—'}</div>`; ratios = `<div>Market Cap: <b>${escapeHtml(o.market_cap||'—')}</b></div>`; }
+function renderCompany(sym,o){ const p=db.settings.provider; let desc='—', prof='—', ratios='—'; if(p==='fh'){ desc = o.name? `${escapeHtml(o.name)} – ${escapeHtml(o.finnhubIndustry||o.sector||'')}` : '—'; prof = `<div>מדינה: <b>${escapeHtml(o.country||'—')}</b></div><div>IPO: <b>${escapeHtml(o.ipo||'—')}</b></div><div>אתר: ${o.weburl?`<a href="${o.weburl}" target="_blank" rel="noopener">${o.weburl}</a>`:'—'}</div>`; ratios = `<div>Ticker: <b>${escapeHtml(o.ticker||sym)}</b></div><div>Exchange: <b>${escapeHtml(o.exchange||'—')}</b></div>`; }
+ else if(p==='td'){ desc = escapeHtml(o.description||o.name||'—'); prof = `<div>סקטור: <b>${escapeHtml(o.sector||'—')}</b></div><div>תעשייה: <b>${escapeHtml(o.industry||'—')}</b></div><div>אתר: ${o.website?`<a href="${o.website}" target="_blank" rel="noopener">${o.website}</a>`:'—'}</div>`; ratios = `<div>Market Cap: <b>${escapeHtml(o.market_cap||'—')}</b></div>`; }
  else { desc = escapeHtml(o.Description||'—'); prof = `<div>סקטור: <b>${escapeHtml(o.Sector||'—')}</b></div><div>תעשייה: <b>${escapeHtml(o.Industry||'—')}</b></div><div>מדינה: <b>${escapeHtml(o.Country||'—')}</b></div>`; ratios = `<div>PE: <b>${escapeHtml(o.TrailingPE||'—')}</b></div><div>PS: <b>${escapeHtml(o.PriceToSalesRatioTTM||'—')}</b></div>`; }
  $('#ovw').innerHTML = desc; $('#prof').innerHTML = prof; $('#ratios').innerHTML = ratios; }
 
-/* ===== Alerts (crossings) ===== */
-function computeCrossAndZone(sym, prevPrice, currPrice, currPct){ const it=db.items[sym]; const msgs=[]; function zoneMsg(prevVal,currVal,l,u,label){ if(l==null||u==null) return; const was=prevVal!=null && prevVal>=l && prevVal<=u; const is=currVal!=null && currVal>=l && currVal<=u; if(was!==is) msgs.push((is?'נכנס':'יצא')+` לאזור ${label} (${l}–${u})`); const now=Date.now(); const z=it.zoneStats ||= {insideMs:0,totalMs:0,lastTs:now}; const dt=Math.max(0, now-(z.lastTs||now)); if(z.lastTs){ z.totalMs+=dt; if(is) z.insideMs+=dt; } z.lastTs=now; }
- if(it.thrType==='price'){ const u=it.thrUpper,l=it.thrLower; if(u!=null && prevPrice!=null && prevPrice<=u && currPrice>u) msgs.push(`עלה מעל ${u}`); if(l!=null && prevPrice!=null && prevPrice>=l && currPrice<l) msgs.push(`ירד מתחת ${l}`); zoneMsg(prevPrice,currPrice,l,u,'מחיר'); }
- else { const u=it.thrUpper,l=it.thrLower; const prevPct=it.last?.changePct ?? null; if(u!=null && prevPct!=null && prevPct<=u && currPct>u) msgs.push(`% חצה ↑ ${u}`); if(l!=null && prevPct!=null && prevPct>=l && currPct<l) msgs.push(`% חצה ↓ ${l}`); zoneMsg(prevPct,currPct,l,u,'אחוז'); }
+/* ===== Alerts ===== */
+function computeCross(sym, prevPrice, currPrice, currPct){ const it=db.items[sym]; const msgs=[]; function zone(prevVal,currVal,l,u,label){ if(l==null||u==null) return; const was=prevVal!=null && prevVal>=l && prevVal<=u; const is=currVal!=null && currVal>=l && currVal<=u; if(was!==is) msgs.push((is?'נכנס':'יצא')+` לאזור ${label} (${l}–${u})`); }
+ if(it.thrType==='price'){ const u=it.thrUpper,l=it.thrLower; if(u!=null && prevPrice!=null && prevPrice<=u && currPrice>u) msgs.push(`עלה מעל ${u}`); if(l!=null && prevPrice!=null && prevPrice>=l && currPrice<l) msgs.push(`ירד מתחת ${l}`); zone(prevPrice,currPrice,l,u,'מחיר'); }
+ else { const u=it.thrUpper,l=it.thrLower; const prevPct=it.last?.changePct ?? null; if(u!=null && prevPct!=null && prevPct<=u && currPct>u) msgs.push(`% חצה ↑ ${u}`); if(l!=null && prevPct!=null && prevPct>=l && currPct<l) msgs.push(`% חצה ↓ ${l}`); zone(prevPct,currPct,l,u,'אחוז'); }
  if(msgs.length){ const t=Date.now(); for(const m of msgs){ const id=`${sym}|${m}`; const already=db.alerts.find(a=>a.id===id && t-a.ts<12*60*60*1000); if(!already){ db.alerts.push({id,sym,m,ts:t,seen:false}); toast(`${sym}: ${m}`,'ok'); if(!isDND()) notifyUser(sym,m); } } } return msgs; }
 
 /* ===== Settings Dialog ===== */
 const dlgSet=$('#dlgSettings'); $('#btnSettings').onclick=()=>{ openSettings(); dlgSet.showModal(); }; $('#dlgSetClose').onclick=()=>{ applySettingsFromUI(); dlgSet.close(); };
+$('#btnTest').onclick=async()=>{ try{ applySettingsFromUI(); if(!Provider.getKey()) throw new Error('MISSING_KEY'); setStatus('בודק…','warn'); await Provider.quote('MSFT'); setStatus('חיבור תקין','ok'); toast('בדיקה הצליחה','ok'); }catch(e){ setStatus(shortAPIErr(e),'bad'); toast(e.message,'err'); } };
 function openSettings(){ const p=db.settings.provider; $$('input[name="provider"]').forEach(r=>r.checked = (r.value===p)); $('#apiKeyAV').value=db.settings.keys.av||''; $('#apiKeyFH').value=db.settings.keys.fh||''; $('#apiKeyTD').value=db.settings.keys.td||''; $('#refreshSec').value=db.settings.refreshSec||15; $('#updFrom').value=db.settings.updateFrom??8; $('#updTo').value=db.settings.updateTo??23; $('#strictBudget').checked=db.settings.strictBudget ?? true; $('#dailyBudget').value=db.settings.dailyBudget ?? (p==='fh'?5000:25); $('#notifyDesktop').checked=db.settings.notifyDesktop ?? true; $('#notifySound').checked=db.settings.notifySound ?? true; $('#dndFrom').value=db.settings.dndFrom ?? 22; $('#dndTo').value=db.settings.dndTo ?? 7; }
 function applySettingsFromUI(){ const p=document.querySelector('input[name="provider"]:checked')?.value||db.settings.provider; db.settings.provider=p; db.settings.keys.av=$('#apiKeyAV').value; db.settings.keys.fh=$('#apiKeyFH').value; db.settings.keys.td=$('#apiKeyTD').value; db.settings.refreshSec=Math.max(10,Math.min(3600,parseInt($('#refreshSec').value||db.settings.refreshSec,10))); db.settings.updateFrom=parseInt($('#updFrom').value||db.settings.updateFrom,10); db.settings.updateTo=parseInt($('#updTo').value||db.settings.updateTo,10); db.settings.strictBudget=$('#strictBudget').checked; db.settings.dailyBudget=parseInt($('#dailyBudget').value||db.settings.dailyBudget,10); db.settings.notifyDesktop=$('#notifyDesktop').checked; db.settings.notifySound=$('#notifySound').checked; db.settings.dndFrom=parseInt($('#dndFrom').value||db.settings.dndFrom,10); db.settings.dndTo=parseInt($('#dndTo').value||db.settings.dndTo,10); save(); }
 
 /* ===== Export/Import ===== */
-$('#btnExport').onclick=()=>{ const minimal={version:2,items:Object.fromEntries(Object.entries(db.items).map(([sym,it])=>[sym,{name:it.name||'',note:it.note||'',rank:it.rank||'mid',sector:it.sector||'',thrType:it.thrType||'price',thrUpper:it.thrUpper??null,thrLower:it.thrLower??null}]))}; const blob=new Blob([JSON.stringify(minimal,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='watchlist.json'; a.click(); URL.revokeObjectURL(url); };
+$('#btnExport').onclick=()=>{ const minimal={version:3,items:Object.fromEntries(Object.entries(db.items).map(([sym,it])=>[sym,{name:it.name||'',note:it.note||'',rank:it.rank||'mid',sector:it.sector||'',thrType:it.thrType||'price',thrUpper:it.thrUpper??null,thrLower:it.thrLower??null}]))}; const blob=new Blob([JSON.stringify(minimal,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='watchlist.json'; a.click(); URL.revokeObjectURL(url); };
 $('#btnExportCSV').onclick=()=>{ const headers=["Symbol","Name","Sector","Price","ChangePct","Pre","Regular","After","Overnight","ThreshType","Upper","Lower","Rank","Note"]; const rows=[headers]; for(const [sym,it] of Object.entries(db.items)){ rows.push([sym,(it.name||''),(it.sector||''),(it.last?.price??''),(it.last?.changePct??''),(it.sessions?.pre?.price??''),(it.sessions?.reg?.price??''),(it.sessions?.aft?.price??''),(it.sessions?.ovr?.price??''),(it.thrType||''),(it.thrUpper??''),(it.thrLower??''),(it.rank||''),(it.note||'')]); } const csv = rows.map(r=>r.map(v=>{const s=(v??'').toString(); return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;}).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='watchlist.csv'; a.click(); URL.revokeObjectURL(url); };
 $('#fileImport').parentElement.onclick=()=>$('#fileImport').click();
 $('#fileImport').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(obj.items && typeof obj.items==='object'){ for(const [sym,b] of Object.entries(obj.items)){ db.items[sym] ??= {zoneStats:{insideMs:0,totalMs:0,lastTs:Date.now()},nextDueTs:Date.now(),sym}; Object.assign(db.items[sym],{name:b.name||'',note:b.note||'',rank:b.rank||'mid',sector:b.sector||'',thrType:b.thrType||'price',thrUpper:b.thrUpper??null,thrLower:b.thrLower??null}); } save(); render(); toast('ייבוא הושלם','ok'); } else toast('קובץ לא תקין','err'); }catch{ toast('קובץ לא תקין','err'); } }; r.readAsText(f); };
@@ -333,9 +331,9 @@ $$('#tbl thead th[data-k]').forEach(th=>{ th.onclick=()=>{ const k=th.dataset.k;
 function bindInlineEditors(){ $$('#tbody [data-edit]').forEach(inp=>{ const sym=inp.dataset.sym, f=inp.dataset.edit; inp.onchange=()=>applyEdit(sym,f,inp.value); }); }
 function applyEdit(sym,field,val){ const it=db.items[sym]; if(!it) return; if(field==='thrUpper'||field==='thrLower'){ it[field]=val===''?null:parseFloat(val); } else if(field==='thrType'){ it.thrType=val; } else if(field==='name'||field==='note'||field==='rank'){ it[field]=val; } save(); render(); }
 
-/* ===== Helpers ===== */
-function shortAPIErr(e){ const m=e.message||'שגיאת API'; if(/limit|429|Too Many/i.test(m)) return 'חריגה ממגבלה'; if(/apikey|token|API key/i.test(m)) return 'מפתח חסר/שגוי'; if(/Thank you for using Alpha Vantage|standard API call/i.test(m)) return 'מכסה/קצב (AV)'; return 'שגיאת API'; }
-function setStatus(txt,tone='ok',silent=false){ $('#sysStatus').textContent=txt; $('#statusText').textContent=txt; $('#dotOK').style.display=tone==='ok'?'inline-block':'none'; $('#dotWARN').style.display=tone==='warn'?'inline-block':'none'; $('#dotBAD').style.display=tone==='bad'?'inline-block':'none'; if(!silent) toast(txt, tone==='ok'?'ok':tone==='warn'?'warn':'err'); }
+/* ===== Error mapping ===== */
+function shortAPIErr(e){ const m=(e&&e.message)||''; if(m==='MISSING_KEY' || /אין מפתח|missing key|no api key|no token|token required/i.test(m)) return 'מפתח חסר/שגוי'; if(/apikey|token|API key/i.test(m)) return 'מפתח חסר/שגוי'; if(/limit|429|Too Many|rate/i.test(m)) return 'חריגה ממגבלת קצב/מכסה'; if(/premium|access|forbidden|403/i.test(m)) return 'הספק חסם את הקריאה (גישה/מנוי)'; return 'שגיאת API'; }
+function setStatus(txt,tone='ok',silent=false){ $('#sysStatus').textContent=txt; $('#statusText')?.textContent=txt; $('#dotOK')?.style && ($('#dotOK').style.display=tone==='ok'?'inline-block':'none'); $('#dotWARN')?.style && ($('#dotWARN').style.display=tone==='warn'?'inline-block':'none'); $('#dotBAD')?.style && ($('#dotBAD').style.display=tone==='bad'?'inline-block':'none'); if(!silent) toast(txt, tone==='ok'?'ok':tone==='warn'?'warn':'err'); }
 
 /* ===== Init ===== */
 $('#btnAdd').onclick=addItem; $('#btnStart').onclick=start; $('#btnStop').onclick=stop; requestNotifPermission(); render();
