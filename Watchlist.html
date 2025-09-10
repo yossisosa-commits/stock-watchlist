@@ -3,24 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>רשימת מעקב מניות</title>
+<title>רשימת מעקב מניות · Pro+</title>
 <style>
   :root{
-    --bg: #0b1016; --panel:#111824; --text:#e6eef6; --muted:#8aa0b5;
+    --bg:#0b1016; --panel:#111824; --text:#e6eef6; --muted:#8aa0b5;
     --primary:#4cc2ff; --danger:#ff5d6c; --success:#3fd080; --warn:#ffb347;
     --border:#243041; --chip:#1b2633; --row-hover:#0f1620; --accent:#7dd3fc;
-    --font: Inter, "Segoe UI", "Noto Sans Hebrew", Arial, sans-serif;
+    --high:#0b3a2a; --mid:#2a3040; --low:#3a2a2a;
+    --font: Inter,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;
   }
   @media (prefers-color-scheme: light){
     :root{
-      --bg:#f7f9fc; --panel:#ffffff; --text:#0b2239; --muted:#5b7083;
+      --bg:#f7f9fc; --panel:#fff; --text:#0b2239; --muted:#5b7083;
       --primary:#0078d4; --danger:#c5221f; --success:#0f9d58; --warn:#b7791f;
       --border:#e6eef6; --chip:#f2f6fb; --row-hover:#f6f9ff; --accent:#0078d4;
+      --high:#e6fff3; --mid:#eef3ff; --low:#fff0f0;
     }
   }
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.45}
-  .app{max-width:1200px;margin-inline:auto;padding:16px;display:grid;gap:16px;grid-template-rows:auto auto 1fr auto}
+  .app{max-width:1280px;margin-inline:auto;padding:16px;display:grid;gap:16px;grid-template-rows:auto auto 1fr auto}
   header{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;gap:12px}
   header .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   h1{font-size:clamp(18px,2.4vw,24px);margin:0}
@@ -35,27 +37,27 @@
   button.primary{background:var(--primary);color:#001827;border:0}
   button.ghost{background:transparent;border:1px dashed var(--border);color:var(--muted)}
   button.danger{background:var(--danger);border:0;color:white}
-  button.warn{background:var(--warn);border:0;color:#1a1200}
   .grid{display:grid;gap:8px;grid-template-columns:repeat(12,1fr);align-items:end}
-  .col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-6{grid-column:span 6}.col-12{grid-column:span 12}
-  @media (max-width:900px){.col-3,.col-4,.col-5,.col-6{grid-column:span 12}}
+  .col-1{grid-column:span 1}.col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}
+  .col-5{grid-column:span 5}.col-6{grid-column:span 6}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+  @media (max-width:1100px){.col-3,.col-4,.col-5,.col-6,.col-7,.col-8{grid-column:span 12}}
   .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}
   .status-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .status-dot{width:10px;height:10px;border-radius:50%}
   .ok{background:var(--success)} .bad{background:var(--danger)} .warnc{background:var(--warn)}
   .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .table-wrap{overflow:auto;overscroll-behavior:contain;border-radius:12px;border:1px solid var(--border)}
-  table{border-collapse:separate;border-spacing:0;width:100%;min-width:980px;background:var(--panel)}
-  thead th{position:sticky;top:0;background:var(--panel);z-index:1;border-bottom:1px solid var(--border)}
-  th, td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+  .table-wrap{overflow:auto;border-radius:12px;border:1px solid var(--border)}
+  table{border-collapse:separate;border-spacing:0;width:100%;min-width:1300px;background:var(--panel)}
+  thead th{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--border);cursor:pointer}
+  th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
   tbody tr:hover{background:var(--row-hover)}
   .mono{font-variant-numeric:tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
   .muted{color:var(--muted)}
   .right{margin-inline-start:auto}
   .chip{background:var(--chip);border:1px solid var(--border);padding:2px 8px;border-radius:999px;font-size:12px}
   .gain{color:var(--success)} .loss{color:var(--danger)}
-  .note{max-width:280px;overflow:hidden;text-overflow:ellipsis}
-  .spark{width:100px;height:28px}
+  .note{max-width:260px;overflow:hidden;text-overflow:ellipsis}
+  .spark{width:110px;height:28px}
   .flex{display:flex;gap:8px;align-items:center}
   .stack{display:flex;flex-direction:column;gap:6px}
   .toast{position:fixed;inset-inline-end:16px;bottom:16px;display:grid;gap:8px;z-index:9999}
@@ -68,113 +70,171 @@
   .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--chip);border:1px solid var(--border);border-radius:6px;padding:1px 6px}
   .danger-text{color:var(--danger)}
   .wrap{white-space:normal}
+  .editable{background:transparent;border:1px dashed transparent}
+  .editable:focus{border-color:var(--accent);background:rgba(125,211,252,0.08)}
+  .tag{display:inline-block;padding:.1rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--chip);font-size:12px}
+
+  /* Highlight rows by potential/rank and crossings */
+  tr.rank-high { background: linear-gradient(0deg, transparent, transparent) }
+  tr.rank-high:hover { background: rgba(0,255,128,0.05) }
+  tr.rank-mid  { background: linear-gradient(0deg, transparent, transparent) }
+  tr.rank-low  { background: linear-gradient(0deg, transparent, transparent) }
+  tr.has-cross td { box-shadow: inset 0 0 0 9999px rgba(255,189,57,0.06); }
+
+  /* Small badges */
+  .badge{display:inline-block;padding:.1rem .45rem;border-radius:6px;border:1px solid var(--border);background:var(--chip);font-size:11px}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="panel" id="top">
     <div class="row">
-      <h1>רשימת מעקב מניות</h1>
-      <span class="pill">סטטוס מערכת: <span id="sysStatus">בהמתנה למפתח…</span></span>
-      <span class="pill">סה״כ מניות: <b id="countTotal">0</b></span>
-      <span class="pill">חציות פעילות: <b id="countAlerts">0</b></span>
-      <span class="pill" id="rateInfo">קצב רענון: <b id="refreshLabel">15s</b></span>
-      <span class="pill">זמן עדכון אחרון: <b id="lastUpdate">—</b></span>
-      <span class="pill">תקציב יומי: <b id="dailyUsed">0</b>/<b id="dailyCap">500</b></span>
+      <h1>רשימת מעקב מניות · Pro+</h1>
+      <span class="pill">סטטוס: <span id="sysStatus">בהמתנה למפתח…</span></span>
+      <span class="pill">סה״כ: <b id="countTotal">0</b></span>
+      <span class="pill">חציות: <b id="countAlerts">0</b></span>
+      <span class="pill" id="rateInfo">קצב: <b id="refreshLabel">15s</b></span>
+      <span class="pill">עודכן: <b id="lastUpdate">—</b></span>
+      <span class="pill">תקציב/יום: <b id="dailyUsed">0</b>/<b id="dailyCap">25</b></span>
+      <span class="pill">ספק: <b id="providerLabel">Alpha Vantage</b></span>
     </div>
+
+    <!-- Provider + Keys -->
     <div class="grid">
-      <div class="col-3 stack">
-        <label for="apiKey">מפתח API (Alpha Vantage)</label>
-        <input id="apiKey" type="password" placeholder="הדבק כאן את המפתח" />
-      </div>
-      <div class="col-2 stack">
-        <label for="refreshSec">תדירות (שניות)</label>
-        <input id="refreshSec" type="number" min="15" max="3600" value="15"/>
-      </div>
-      <div class="col-3 stack">
-        <label>הגדרות רענון והתראות</label>
+      <div class="col-4 panel" style="display:grid;gap:8px">
+        <label>ספק נתונים</label>
+        <div class="toolbar">
+          <label><input type="radio" name="provider" value="av" checked> Alpha Vantage</label>
+          <label><input type="radio" name="provider" value="fh"> Finnhub</label>
+          <label><input type="radio" name="provider" value="td"> Twelve Data</label>
+        </div>
+        <div class="grid">
+          <div class="col-12 stack">
+            <label for="apiKeyAV">מפתח AV</label>
+            <input id="apiKeyAV" type="password" placeholder="Alpha Vantage API Key" />
+          </div>
+          <div class="col-12 stack">
+            <label for="apiKeyFH">מפתח Finnhub</label>
+            <input id="apiKeyFH" type="password" placeholder="Finnhub API Key" />
+          </div>
+          <div class="col-12 stack">
+            <label for="apiKeyTD">מפתח Twelve Data</label>
+            <input id="apiKeyTD" type="password" placeholder="Twelve Data API Key" />
+          </div>
+        </div>
         <div class="toolbar">
           <button id="btnTest" class="primary">בדיקת API</button>
-          <button id="btnStart">התחל רענון</button>
-          <button id="btnStop">עצור</button>
-          <label title="עמידה במכסת 500/יום (Free). בטל אם יש לך מנוי פרימיום.">
-            <input id="strictBudget" type="checkbox" checked> Strict daily budget
-          </label>
-          <label title="כמות קריאות מקסימלית ליום (הצעה: 480 להשאיר מרווח).">
-            תקציב/יום: <input id="dailyBudget" type="number" min="50" max="100000" value="500" style="width:90px">
-          </label>
+          <a class="kbd" href="https://www.alphavantage.co/support/#api-key" target="_blank" rel="noopener">קבל מפתח AV</a>
+          <a class="kbd" href="https://api.finnhub.io/docs/api" target="_blank" rel="noopener">מפתח Finnhub</a>
+          <a class="kbd" href="https://twelvedata.com/" target="_blank" rel="noopener">מפתח Twelve Data</a>
         </div>
       </div>
-      <div class="col-4 stack">
-        <label>התראות</label>
-        <div class="toolbar">
-          <label title="התראות דפדפן (פוש)">
-            <input id="notifyDesktop" type="checkbox" checked> פוש דסקטופ
-          </label>
-          <label title="צליל קצר בעת התראה">
-            <input id="notifySound" type="checkbox" checked> צליל
-          </label>
-          <label title="אל תפריע בין שעות אלו">
-            אל תפריע: מ- <input id="dndFrom" type="number" min="0" max="23" value="22" style="width:60px"> עד <input id="dndTo" type="number" min="0" max="23" value="7" style="width:60px">
-          </label>
-          <button id="btnClearAlerts" class="ghost">נקה התראות</button>
+
+      <!-- Update + Alerts -->
+      <div class="col-4 panel" style="display:grid;gap:8px">
+        <label>רענון והתראות</label>
+        <div class="grid">
+          <div class="col-4 stack">
+            <label for="refreshSec">תדירות (שניות)</label>
+            <input id="refreshSec" type="number" min="10" max="3600" value="15"/>
+          </div>
+          <div class="col-8 stack">
+            <label>חלון עדכון (שעות מקומיות)</label>
+            <div class="toolbar">
+              מ- <input id="updFrom" type="number" min="0" max="23" value="8" style="width:64px">
+              עד <input id="updTo" type="number" min="0" max="23" value="23" style="width:64px">
+              <span class="muted">(מחוץ לחלון – רק רענון ידני)</span>
+            </div>
+          </div>
+          <div class="col-12 toolbar">
+            <button id="btnStart">התחל</button>
+            <button id="btnStop">עצור</button>
+            <label title="שמור על מכסה יומית בספקים חינמיים">
+              <input id="strictBudget" type="checkbox" checked> Strict daily budget
+            </label>
+            <label>תקציב/יום:
+              <input id="dailyBudget" type="number" min="10" max="100000" value="25" style="width:90px">
+            </label>
+          </div>
+          <div class="col-12 toolbar">
+            <label><input id="notifyDesktop" type="checkbox" checked> פוש דסקטופ</label>
+            <label><input id="notifySound" type="checkbox" checked> צליל</label>
+            <label>אל‑תפריע:
+              מ- <input id="dndFrom" type="number" min="0" max="23" value="22" style="width:64px">
+              עד <input id="dndTo" type="number" min="0" max="23" value="7" style="width:64px">
+            </label>
+            <button id="btnClearAlerts" class="ghost">נקה התראות</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Symbol -->
+      <div class="col-4 panel" style="display:grid;gap:8px">
+        <label>הוספת מניה</label>
+        <div class="grid">
+          <div class="col-3 stack">
+            <label for="sym">סימול</label>
+            <input id="sym" placeholder="AAPL" />
+          </div>
+          <div class="col-4 stack">
+            <label for="friendly">שם ידידותי</label>
+            <input id="friendly" placeholder="Apple Inc." />
+          </div>
+          <div class="col-5 stack">
+            <label for="note">הערה</label>
+            <input id="note" placeholder="לונג..." />
+          </div>
+          <div class="col-4 stack">
+            <label for="thrType">סוג סף</label>
+            <select id="thrType">
+              <option value="price">מחיר</option>
+              <option value="pct">אחוז יומי</option>
+            </select>
+          </div>
+          <div class="col-4 stack">
+            <label for="thrUpper">סף עליון</label>
+            <input id="thrUpper" type="number" step="0.01" placeholder="—" />
+          </div>
+          <div class="col-4 stack">
+            <label for="thrLower">סף תחתון</label>
+            <input id="thrLower" type="number" step="0.01" placeholder="—" />
+          </div>
+          <div class="col-6 stack">
+            <label for="rank">דירוג פוטנציאל</label>
+            <select id="rank">
+              <option value="high">גבוה</option>
+              <option value="mid" selected>בינוני</option>
+              <option value="low">נמוך</option>
+            </select>
+          </div>
+          <div class="col-6" style="display:flex;gap:8px;align-items:end;justify-content:flex-end">
+            <button id="btnAdd" class="primary">הוסף</button>
+            <button id="btnExport">ייצוא רשימת מניות</button>
+            <button id="btnExportCSV">ייצוא CSV</button>
+            <label class="ghost"><input id="fileImport" type="file" accept="application/json" hidden><span class="kbd">ייבוא</span></label>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-  <section class="panel">
-    <h2 style="margin:0 0 8px 0;font-size:18px">הוספת מניה</h2>
-    <div class="grid">
-      <div class="col-2 stack">
-        <label for="sym">סימול (AAPL, MSFT…)</label>
-        <input id="sym" placeholder="AAPL" />
-      </div>
-      <div class="col-3 stack">
-        <label for="friendly">שם ידידותי</label>
-        <input id="friendly" placeholder="Apple Inc." />
-      </div>
-      <div class="col-3 stack">
-        <label for="note">הערה</label>
-        <input id="note" placeholder="לונג, דוח רבעוני בקרוב…" />
-      </div>
-      <div class="col-2 stack">
-        <label for="thrType">סוג סף</label>
-        <select id="thrType">
-          <option value="price">מחיר</option>
-          <option value="pct">אחוז יומי</option>
-        </select>
-      </div>
-      <div class="col-1 stack">
-        <label for="thrUpper">סף עליון</label>
-        <input id="thrUpper" type="number" step="0.01" placeholder="—" />
-      </div>
-      <div class="col-1 stack">
-        <label for="thrLower">סף תחתון</label>
-        <input id="thrLower" type="number" step="0.01" placeholder="—" />
-      </div>
-      <div class="col-12">
-        <button id="btnAdd" class="primary">הוסף לרשימה</button>
-        <button id="btnExport">ייצוא רשימת מניות</button>
-        <label class="ghost">
-          <input id="fileImport" type="file" accept="application/json" hidden>
-          <span class="kbd">ייבוא רשימת מניות</span>
-        </label>
-      </div>
-    </div>
-  </section>
-
-  <section class="table-wrap">
+  <!-- Table -->
+  <section class="table-wrap" id="tableWrap">
     <table id="tbl">
       <thead>
         <tr>
-          <th>סימול</th>
-          <th>שם</th>
-          <th>מחיר</th>
-          <th>שינוי</th>
-          <th>סטטוס/התראות</th>
-          <th>בתוך האזור</th>
-          <th>הערות</th>
+          <th data-k="symbol">סימול ▲▼</th>
+          <th data-k="name">שם</th>
+          <th data-k="sector">סקטור</th>
+          <th data-k="price">מחיר</th>
+          <th data-k="chg">% שינוי</th>
+          <th data-k="pre">Pre</th>
+          <th data-k="reg">Regular</th>
+          <th data-k="aft">After</th>
+          <th data-k="ovr">Overnight</th>
+          <th data-k="thr">ספים</th>
+          <th data-k="rank">פוטנציאל</th>
+          <th data-k="note">הערה</th>
           <th>מיני גרף</th>
           <th>פעולות</th>
         </tr>
@@ -185,14 +245,15 @@
 
   <section class="panel">
     <div class="status-row">
-      <div class="status-dot ok" id="dotOK" title="תקין" style="display:none"></div>
-      <div class="status-dot warnc" id="dotWARN" title="הזהרה" style="display:none"></div>
-      <div class="status-dot bad" id="dotBAD" title="שגיאה" style="display:none"></div>
+      <div class="status-dot ok" id="dotOK" style="display:none"></div>
+      <div class="status-dot warnc" id="dotWARN" style="display:none"></div>
+      <div class="status-dot bad" id="dotBAD" style="display:none"></div>
       <span id="statusText" class="muted">מוכן</span>
-      <span class="right muted">טיפ: פרטי חברה נטענים לפי דרישה (OVERVIEW) – חוסך קריאות API.</span>
+      <span class="right muted">טיפ: פרטי חברה/סקטור נטענים לפי דרישה לחיסכון במכסה.</span>
     </div>
   </section>
 
+  <!-- Details -->
   <dialog id="dlg">
     <div class="modal-head">
       <strong id="dlgTitle">פרטים</strong>
@@ -201,7 +262,7 @@
     </div>
     <div class="modal-body">
       <div class="section">
-        <h3>תקציר חברה</h3>
+        <h3>תקציר</h3>
         <div id="ovw" class="wrap muted">—</div>
       </div>
       <div class="section">
@@ -209,12 +270,8 @@
         <div id="prof" class="wrap">—</div>
       </div>
       <div class="section">
-        <h3>מכפילים ונתונים</h3>
+        <h3>מכפילים</h3>
         <div id="ratios" class="wrap">—</div>
-      </div>
-      <div class="section">
-        <h3>דוחות ותחזיות</h3>
-        <div id="fund" class="wrap">—</div>
       </div>
     </div>
   </dialog>
@@ -223,58 +280,71 @@
 </div>
 
 <script>
-/*** ====== שמירה מקומית + ברירות מחדל ====== ***/
-const STORAGE_KEY = 'watchlist.v3';
-const DEFAULTS = {
+/* -- JavaScript code identical to previous message's Pro+ version -- */
+
+// (For brevity in this tool block, we include the JS exactly as in the previous assistant message.)
+
+/*** ====== שמירה מקומית ====== ***/
+const STORAGE_KEY='watchlist.pro.plus.v1';
+const DEFAULTS={
   settings:{
-    apiKey:'', refreshSec:15,
-    strictBudget:true, dailyBudget:500,
+    provider:'av',
+    keys:{ av:'', fh:'', td:'' },
+    refreshSec:15,
+    updateFrom:8, updateTo:23,
+    strictBudget:true, dailyBudget:25,
     notifyDesktop:true, notifySound:true, dndFrom:22, dndTo:7
   },
-  usage:{ date: '', count: 0 }, // ספירת קריאות יומית (לפי לקוח)
-  items:{}, // symbol -> {name,note,thrType,thrUpper,thrLower,last,spark,seenAlertsTs,zoneStats:{insideMs,totalMs,lastTs},nextDueTs}
-  alerts:[]
+  usage:{ date:'', count:0 },
+  items:{},
+  alerts:[],
+  sort:{ k:'symbol', dir:'asc' }
 };
-const db = load();
+const db=load();
 function load(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw=localStorage.getItem(STORAGE_KEY);
     if(!raw) return structuredClone(DEFAULTS);
-    const parsed = JSON.parse(raw);
-    parsed.settings ||= DEFAULTS.settings;
-    parsed.usage ||= DEFAULTS.usage;
-    parsed.items ||= {};
-    parsed.alerts ||= [];
-    return parsed;
+    const p=JSON.parse(raw);
+    p.settings ||= DEFAULTS.settings;
+    p.settings.keys ||= {av:'',fh:'',td:''};
+    p.settings.notifyDesktop ??= true;
+    p.settings.notifySound ??= true;
+    p.settings.dndFrom ??= 22; p.settings.dndTo ??= 7;
+    p.usage ||= {date:'',count:0};
+    p.items ||= {};
+    p.alerts ||= [];
+    p.sort ||= {k:'symbol',dir:'asc'};
+    return p;
   }catch(e){ console.error(e); return structuredClone(DEFAULTS); }
 }
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
 
-/*** ====== עזרי UI ====== ***/
-const $ = sel => document.querySelector(sel);
-const $$ = sel => [...document.querySelectorAll(sel)];
+/*** ====== Utils ====== ***/
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const fmt = new Intl.NumberFormat('he-IL',{maximumFractionDigits:2});
 const fmtPct = v => (v>0?'+':'') + (isFinite(v)?v.toFixed(2):'0.00')+'%';
 function toast(msg, tone='warn'){
-  const box = $('#toast');
-  const el = document.createElement('div');
-  el.className = 'item';
+  const box=$('#toast'); const el=document.createElement('div'); el.className='item';
   el.style.borderInlineStartColor = tone==='ok'?'var(--success)':tone==='err'?'var(--danger)':'var(--warn)';
-  el.textContent = msg;
-  box.appendChild(el);
-  setTimeout(()=>{ el.remove(); }, 4500);
+  el.textContent=msg; box.appendChild(el); setTimeout(()=>el.remove(), 4500);
 }
-function escapeHtml(s){ return s?.replace(/[&<>"]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m])) || ''; }
+function escapeHtml(s){ return s?.replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))||''; }
+function inUpdateWindow(){
+  const h = new Date().getHours();
+  const from = db.settings.updateFrom, to = db.settings.updateTo;
+  return from < to ? (h>=from && h<to) : (h>=from || h<to);
+}
 
-/*** ====== התראות: דסקטופ + צליל + DND ====== ***/
+/*** ====== Notifications (Desktop + Sound + DND) ====== ***/
+function requestNotifPermission(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default') Notification.requestPermission();
+}
 function isDND(){
   const from = parseInt($('#dndFrom').value,10), to = parseInt($('#dndTo').value,10);
   const h = new Date().getHours();
   return from < to ? (h>=from && h<to) : (h>=from || h<to);
-}
-function requestNotifPermission(){
-  if(!('Notification' in window)) return;
-  if(Notification.permission === 'default') Notification.requestPermission();
 }
 function playBeep(){
   if(!db.settings.notifySound) return;
@@ -287,7 +357,7 @@ function playBeep(){
     g.gain.exponentialRampToValueAtTime(0.05, now+0.01);
     g.gain.exponentialRampToValueAtTime(0.00001, now+0.25);
     o.stop(now+0.3);
-  }catch(e){ /* no-op */ }
+  }catch(e){}
 }
 function notifyUser(title, body){
   if(db.settings.notifyDesktop && !isDND() && 'Notification' in window){
@@ -300,106 +370,159 @@ function notifyUser(title, body){
   if(!isDND() && db.settings.notifySound) playBeep();
 }
 
-/*** ====== ניהול מגבלות: דקה/יום ====== ***/
+/*** ====== ניהול מגבלות/תקציב ====== ***/
 function resetDailyUsageIfNeeded(){
   const today = new Date().toISOString().slice(0,10);
-  if(db.usage.date !== today){
-    db.usage.date = today; db.usage.count = 0; save();
-  }
+  if(db.usage.date !== today){ db.usage.date = today; db.usage.count = 0; save(); }
 }
-function incDailyUsage(){
-  resetDailyUsageIfNeeded();
-  db.usage.count++; save(); updateUsagePill();
-}
-function getDailyBudget(){ return parseInt($('#dailyBudget').value||'500',10); }
+function incDailyUsage(){ resetDailyUsageIfNeeded(); db.usage.count++; save(); updateUsagePill(); }
 function updateUsagePill(){
   $('#dailyUsed').textContent = db.usage.count;
-  $('#dailyCap').textContent = db.settings.dailyBudget||500;
+  $('#dailyCap').textContent = db.settings.dailyBudget;
 }
-function calcSymbolIntervalSec(){
-  const S = Math.max(1, Object.keys(db.items).length);
-  const B = Math.max(1, db.settings.dailyBudget||500);
-  const perSymbolCalls = Math.max(1, Math.floor(B / S)); // כמה מותר ליום לכל סימול
-  const intervalFromBudget = Math.ceil(86400 / perSymbolCalls);
-  return db.settings.strictBudget ? Math.max(db.settings.refreshSec, intervalFromBudget)
-                                  : db.settings.refreshSec;
+function setBudgetByProvider(){
+  const p = db.settings.provider;
+  if(p==='av'){ if(db.settings.dailyBudget<25) db.settings.dailyBudget=25; }
+  if(p==='td'){ if(db.settings.dailyBudget<800) db.settings.dailyBudget=800; }
+  if(p==='fh'){ if(db.settings.dailyBudget<5000) db.settings.dailyBudget=5000; }
 }
 
-/*** ====== תור קריאות API לכיבוד קצב (≈5 לדקה בחינם) ====== ***/
-const API = (()=> {
-  let key = db.settings.apiKey || '';
-  let queue = Promise.resolve();
-  let lastCallTs = 0;
-  const MIN_SPACING_MS = 12_500; // ~5 לדקה (Free)
+/*** ====== ספקים (API) ====== ***/
+const Provider = (()=>{
+  let queue=Promise.resolve(), lastCall=0;
 
-  function setKey(k){ key = (k||'').trim(); db.settings.apiKey = key; save(); }
-  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-  async function request(params){
-    if(!key) throw new Error('אין מפתח API');
-    // תקציב יומי מקומי
-    resetDailyUsageIfNeeded();
-    if(db.settings.strictBudget && db.usage.count >= (db.settings.dailyBudget||500)){
-      throw new Error('ניצלת את התקציב היומי המקומי – השהיה');
-    }
-    const url = new URL('https://www.alphavantage.co/query');
-    Object.entries(params).forEach(([k,v])=> url.searchParams.set(k, v));
-    url.searchParams.set('apikey', key);
-    const res = await fetch(url, {cache:'no-store'});
-    const data = await res.json();
-    // הודעות מגבלת קצב/מכסה מהשרת
-    if(data?.Note){ throw new Error(data.Note); }
-    if(data?.Information){ throw new Error(data.Information); }
-    if(data?.['Error Message']){ throw new Error(data['Error Message']); }
-    incDailyUsage(); // נספר רק על הצלחה
-    return data;
+  function getKey(){
+    const p = db.settings.provider;
+    return p==='av'?db.settings.keys.av : p==='fh'?db.settings.keys.fh : db.settings.keys.td;
   }
-
+  function minSpacing(){
+    const p=db.settings.provider;
+    if(p==='av') return 12500;
+    if(p==='td') return 8500;
+    return 1200;
+  }
+  function baseURL(){
+    const p=db.settings.provider;
+    if(p==='av') return 'https://www.alphavantage.co/query';
+    if(p==='fh') return 'https://finnhub.io/api/v1';
+    return 'https://api.twelvedata.com';
+  }
   function schedule(fn){
-    queue = queue.then(async ()=>{
-      const now = Date.now();
-      const wait = Math.max(0, MIN_SPACING_MS - (now - lastCallTs));
-      if(wait>0) await sleep(wait);
-      const out = await fn();
-      lastCallTs = Date.now();
-      return out;
-    }).catch(e=>{ console.error(e); });
+    queue=queue.then(async()=>{
+      const wait=Math.max(0, minSpacing() - (Date.now()-lastCall));
+      if(wait>0) await new Promise(r=>setTimeout(r,wait));
+      const out=await fn(); lastCall=Date.now(); return out;
+    }).catch(e=>console.error(e));
     return queue;
   }
+  async function requestAV(params){
+    const url = new URL(baseURL());
+    Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+    url.searchParams.set('apikey', getKey());
+    const res = await fetch(url,{cache:'no-store'}); const data = await res.json();
+    if(data?.Note || data?.Information || data?.['Error Message']) throw new Error(data.Note||data.Information||data['Error Message']);
+    incDailyUsage(); return data;
+  }
+  async function requestFH(path, params){
+    const url = new URL(baseURL()+path);
+    Object.entries(params||{}).forEach(([k,v])=>url.searchParams.set(k,v));
+    url.searchParams.set('token', getKey());
+    const res = await fetch(url,{cache:'no-store'}); const data = await res.json();
+    if(data?.error) throw new Error(data.error); incDailyUsage(); return data;
+  }
+  async function requestTD(path, params){
+    const url = new URL(baseURL()+path);
+    Object.entries(params||{}).forEach(([k,v])=>url.searchParams.set(k,v));
+    url.searchParams.set('apikey', getKey());
+    const res = await fetch(url,{cache:'no-store'}); const data = await res.json();
+    if(data?.status==='error' || data?.code) throw new Error(data.message||'TD error'); incDailyUsage(); return data;
+  }
 
-  // נקודות קצה עיקריות (ע"פ תיעוד רשמי של Alpha Vantage)
-  const globalQuote = (symbol)=> schedule(()=>request({function:'GLOBAL_QUOTE', symbol}));
-  const overview    = (symbol)=> schedule(()=>request({function:'OVERVIEW', symbol}));
-  const daily       = (symbol)=> schedule(()=>request({function:'TIME_SERIES_DAILY', symbol, outputsize:'compact'}));
-  return { setKey, globalQuote, overview, daily, sleep };
+  async function quote(symbol){
+    if(db.settings.provider==='av'){
+      return schedule(()=>requestAV({function:'GLOBAL_QUOTE',symbol}));
+    }else if(db.settings.provider==='fh'){
+      return schedule(()=>requestFH('/quote',{symbol}));
+    }else{
+      return schedule(()=>requestTD('/quote',{symbol}));
+    }
+  }
+
+  async function intraday(symbol){
+    if(db.settings.provider==='av'){
+      return schedule(()=>requestAV({function:'TIME_SERIES_INTRADAY',symbol,interval:'5min',outputsize:'compact',extended_hours:'true'}));
+    }else if(db.settings.provider==='fh'){
+      const to = Math.floor(Date.now()/1000), from = to - 60*60*24;
+      return schedule(()=>requestFH('/stock/candle',{symbol,resolution:'5',from,to}));
+    }else{
+      return schedule(()=>requestTD('/time_series',{symbol,interval:'5min',outputsize:'120'}));
+    }
+  }
+
+  async function profile(symbol){
+    if(db.settings.provider==='av'){
+      return schedule(()=>requestAV({function:'OVERVIEW',symbol}));
+    }else if(db.settings.provider==='fh'){
+      return schedule(()=>requestFH('/stock/profile2',{symbol}));
+    }else{
+      return schedule(()=>requestTD('/profile',{symbol}));
+    }
+  }
+
+  return {quote,intraday,profile,getKey};
 })();
 
-/*** ====== רינדור טבלה ====== ***/
+/*** ====== רינדור ====== ***/
 function render(){
-  const tbody = $('#tbody'); tbody.innerHTML = '';
-  const symbols = Object.keys(db.items).sort();
-  $('#countTotal').textContent = symbols.length;
+  const tbody=$('#tbody'); tbody.innerHTML='';
+  const syms=Object.keys(db.items);
+  $('#countTotal').textContent = syms.length;
+
+  syms.sort((a,b)=>compareRows(db.items[a],db.items[b], db.sort));
+
   let activeCross = 0;
+  for(const sym of syms){
+    const it=db.items[sym];
+    const last=it.last||{};
+    const chg=last.changePct;
+    const sess=it.sessions||{};
+    const hasCross = last.cross?.length>0;
 
-  for(const sym of symbols){
-    const it = db.items[sym];
-    const price = it.last?.price ?? null;
-    const chg = it.last?.changePct ?? null;
-    const statusChips = [];
-    if(it.last?.cross?.length){ activeCross += it.last.cross.length; statusChips.push(...it.last.cross.map(c=>`<span class="chip">${c}</span>`)); }
+    const tr=document.createElement('tr');
+    tr.className = (it.rank==='high'?'rank-high':it.rank==='low'?'rank-low':'rank-mid') + (hasCross?' has-cross':'');
+    const nextDue = it.nextDueTs? Math.max(0, it.nextDueTs - Date.now()) : 0;
+    tr.title = nextDue>0 ? `עדכון הבא בעוד ~${Math.ceil(nextDue/1000/60)} דק׳` : 'יתעדכן בסבב הבא';
 
-    const insideRatio = computeInsideRatio(sym);
-    const insideText = isNaN(insideRatio) ? '<span class="muted">—</span>' : (insideRatio*100).toFixed(0)+'%';
+    if(hasCross) activeCross += last.cross.length;
 
-    const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="mono"><strong>${sym}</strong></td>
-      <td class="wrap">${escapeHtml(it.name||'')}</td>
-      <td class="mono">${price!=null ? fmt.format(price) : '<span class="muted">—</span>'}</td>
-      <td class="mono ${chg!=null?(chg>=0?'gain':'loss'):''}">${chg!=null?fmtPct(chg):'<span class="muted">—</span>'}</td>
-      <td>${statusChips.join(' ') || '<span class="muted">—</span>'}</td>
-      <td><span class="chip">${insideText}</span></td>
-      <td class="note">${escapeHtml(it.note||'')}</td>
+      <td class="mono"><strong>${sym}</strong> ${it.nextDueTs?`<span class="badge">T‑${Math.max(0, Math.ceil((it.nextDueTs-Date.now())/1000))}s</span>`:''}</td>
+      <td><input class="editable" data-edit="name" data-sym="${sym}" value="${escapeHtml(it.name||'')}" /></td>
+      <td><span class="tag" id="sec-${sym}">${escapeHtml(it.sector||'—')}</span></td>
+      <td class="mono">${last.price!=null?fmt.format(last.price):'<span class="muted">—</span>'}</td>
+      <td class="mono ${isFinite(chg)?(chg>=0?'gain':'loss'):''}">${isFinite(chg)?fmtPct(chg):'<span class="muted">—</span>'}</td>
+      <td class="mono">${valueOrDash(sess.pre?.price)}</td>
+      <td class="mono">${valueOrDash(sess.reg?.price)}</td>
+      <td class="mono">${valueOrDash(sess.aft?.price)}</td>
+      <td class="mono">${valueOrDash(sess.ovr?.price)}</td>
+      <td>
+        <div class="flex" style="gap:6px">
+          <select data-edit="thrType" data-sym="${sym}">
+            <option value="price" ${it.thrType==='price'?'selected':''}>מחיר</option>
+            <option value="pct" ${it.thrType==='pct'?'selected':''}>%</option>
+          </select>
+          <input class="editable mono" data-edit="thrUpper" data-sym="${sym}" type="number" step="0.01" style="width:90px" placeholder="עליון" value="${it.thrUpper??''}"/>
+          <input class="editable mono" data-edit="thrLower" data-sym="${sym}" type="number" step="0.01" style="width:90px" placeholder="תחתון" value="${it.thrLower??''}"/>
+        </div>
+      </td>
+      <td>
+        <select data-edit="rank" data-sym="${sym}">
+          <option value="high" ${it.rank==='high'?'selected':''}>גבוה</option>
+          <option value="mid"  ${(!it.rank||it.rank==='mid')?'selected':''}>בינוני</option>
+          <option value="low"  ${it.rank==='low'?'selected':''}>נמוך</option>
+        </select>
+      </td>
+      <td><input class="editable" data-edit="note" data-sym="${sym}" value="${escapeHtml(it.note||'')}" /></td>
       <td><canvas class="spark" data-sym="${sym}"></canvas></td>
       <td class="flex">
         <button data-act="details" data-sym="${sym}">פרטים</button>
@@ -411,345 +534,469 @@ function render(){
   }
   $('#countAlerts').textContent = activeCross;
   $('#refreshLabel').textContent = (db.settings.refreshSec||15)+'s';
+  $('#providerLabel').textContent = db.settings.provider==='av'?'Alpha Vantage':db.settings.provider==='fh'?'Finnhub':'Twelve Data';
   updateUsagePill();
+  bindInlineEditors();
   drawSparks().catch(()=>{});
 }
-
-function computeInsideRatio(sym){
-  const z = db.items[sym]?.zoneStats;
-  if(!z || z.totalMs<=0) return NaN;
-  return Math.max(0, Math.min(1, z.insideMs / z.totalMs));
+function valueOrDash(v){ return v!=null?fmt.format(v):'<span class="muted">—</span>'; }
+function compareRows(a,b, sort){
+  const k = sort.k, dir = sort.dir==='asc'?1:-1;
+  const getVal = (it)=>{
+    if(k==='symbol') return it.sym;
+    if(k==='name') return it.name||'';
+    if(k==='sector') return it.sector||'';
+    if(k==='price') return it.last?.price ?? -Infinity;
+    if(k==='chg') return it.last?.changePct ?? -Infinity;
+    if(k==='rank') return it.rank||'mid';
+    if(k==='pre') return it.sessions?.pre?.price ?? -Infinity;
+    if(k==='reg') return it.sessions?.reg?.price ?? -Infinity;
+    if(k==='aft') return it.sessions?.aft?.price ?? -Infinity;
+    if(k==='ovr') return it.sessions?.ovr?.price ?? -Infinity;
+    if(k==='thr') return ((it.thrUpper??'')+'/'+(it.thrLower??''));
+    if(k==='note') return it.note||'';
+    return '';
+  };
+  const va = getVal(a), vb=getVal(b);
+  if(va<vb) return -1*dir; if(va>vb) return 1*dir; return 0;
 }
 
 /*** ====== ספארקליין ====== ***/
 async function drawSparks(){
-  const canvases = $$('#tbody .spark');
-  for(const c of canvases){
-    const sym = c.dataset.sym;
-    const it = db.items[sym];
-    if(!it.spark || Date.now() - (it.spark.ts||0) > 60*60*1000){ // שעה
+  const cvs=$$('#tbody .spark');
+  for(const c of cvs){
+    const sym=c.dataset.sym, it=db.items[sym];
+    if(!it.spark || Date.now()-(it.spark.ts||0)>60*60*1000){
       try{
-        const d = await API.daily(sym); // TIME_SERIES_DAILY (compact)
-        const ts = d['Time Series (Daily)'] || {};
-        const closes = Object.keys(ts).slice(0,60).reverse().map(k=> parseFloat(ts[k]['4. close']));
-        it.spark = { ts: Date.now(), closes };
-        save();
+        if(Provider.getKey()){
+          const series = await Provider.intraday(sym);
+          const closes = extractCloses(series);
+          it.spark = {ts:Date.now(), closes};
+          save();
+        }
       }catch(e){ console.warn('spark fail', sym, e.message); }
     }
     if(it.spark?.closes?.length>1) paintSpark(c, it.spark.closes);
   }
 }
+function extractCloses(series){
+  if(series?.['Time Series (5min)']){
+    const ts = series['Time Series (5min)'];
+    return Object.keys(ts).slice(0,60).reverse().map(k=>parseFloat(ts[k]['4. close']));
+  }else if(series?.s==='ok' && Array.isArray(series?.c)){
+    return series.c.slice(-60);
+  }else if(series?.values){
+    return series.values.slice(0,60).reverse().map(r=>parseFloat(r.close));
+  }
+  return [];
+}
 function paintSpark(canvas, arr){
   const w=canvas.width=canvas.clientWidth, h=canvas.height=canvas.clientHeight;
-  const min=Math.min(...arr), max=Math.max(...arr);
-  const pad=2, xs= (w-2*pad)/(arr.length-1), scale = (v)=> h - pad - ((v-min)/(max-min||1))*(h-2*pad);
+  const mn=Math.min(...arr), mx=Math.max(...arr);
+  const pad=2, xs=(w-2*pad)/(arr.length-1), scale=v=>h-pad-((v-mn)/(mx-mn||1))*(h-2*pad);
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,w,h);
   ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent')||'#4cc2ff';
-  ctx.lineWidth=1.5;
-  ctx.beginPath();
-  arr.forEach((v,i)=>{ const x=pad+ i*xs, y=scale(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
-  ctx.stroke();
+  ctx.lineWidth=1.5; ctx.beginPath();
+  arr.forEach((v,i)=>{ const x=pad+i*xs, y=scale(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke();
 }
 
 /*** ====== הוספה/מחיקה/עדכון ====== ***/
 function addItem(){
   const sym = ($('#sym').value||'').trim().toUpperCase();
   if(!sym) return toast('יש להזין סימול','err');
-  if(db.items[sym]) return toast('הסימול כבר ברשימה','warn');
-  const now = Date.now();
-  db.items[sym] = {
-    name: ($('#friendly').value||'').trim(),
-    note: ($('#note').value||'').trim(),
-    thrType: $('#thrType').value,
-    thrUpper: numOrNull($('#thrUpper').value),
-    thrLower: numOrNull($('#thrLower').value),
-    last: null, spark: null, seenAlertsTs: 0,
-    zoneStats: {insideMs:0,totalMs:0,lastTs: now},
-    nextDueTs: now // ייכנס לתור
+  if(db.items[sym]) return toast('הסימול כבר קיים','warn');
+  const now=Date.now();
+  db.items[sym]={
+    sym, name:($('#friendly').value||'').trim(), note:($('#note').value||'').trim(),
+    rank: $('#rank').value, sector:'',
+    thrType: $('#thrType').value, thrUpper:numOrNull($('#thrUpper').value), thrLower:numOrNull($('#thrLower').value),
+    last:null, sessions:null, spark:null, seenAlertsTs:0,
+    zoneStats:{insideMs:0,totalMs:0,lastTs:now}, nextDueTs:now
   };
   save(); render();
-  refreshOne(sym).then(render);
+  refreshOne(sym).then(()=>refreshSessions(sym)).then(()=>render());
   clearAddForm();
 }
-function numOrNull(v){ const n = parseFloat(v); return isNaN(n)?null:n; }
 function clearAddForm(){ $('#sym').value=''; $('#friendly').value=''; $('#note').value=''; $('#thrUpper').value=''; $('#thrLower').value=''; }
+function numOrNull(v){ const n=parseFloat(v); return isNaN(n)?null:n; }
 function delItem(sym){ delete db.items[sym]; save(); render(); }
 
-/*** ====== עדכון נתונים (מחיר/שינוי) ====== ***/
-let timer=null, tickRunning=false;
+/*** ====== רענון מחירים + סשנים ====== ***/
+let timer=null, busy=false;
 function start(){
-  const sec = parseInt($('#refreshSec').value||'15',10);
-  db.settings.refreshSec = Math.max(15, Math.min(3600, sec));
+  db.settings.refreshSec = Math.max(10, Math.min(3600, parseInt($('#refreshSec').value||'15',10)));
+  db.settings.updateFrom = parseInt($('#updFrom').value||'8',10);
+  db.settings.updateTo   = parseInt($('#updTo').value||'23',10);
   db.settings.strictBudget = $('#strictBudget').checked;
-  db.settings.dailyBudget = getDailyBudget();
-  API.setKey($('#apiKey').value);
+  db.settings.dailyBudget  = parseInt($('#dailyBudget').value||'25',10);
+  db.settings.keys.av = $('#apiKeyAV').value;
+  db.settings.keys.fh = $('#apiKeyFH').value;
+  db.settings.keys.td = $('#apiKeyTD').value;
+  db.settings.notifyDesktop = $('#notifyDesktop').checked;
+  db.settings.notifySound   = $('#notifySound').checked;
+  db.settings.dndFrom = parseInt($('#dndFrom').value||'22',10);
+  db.settings.dndTo   = parseInt($('#dndTo').value||'7',10);
+  setBudgetByProvider();
   save();
   if(timer) clearInterval(timer);
-  tick(); // עכשיו
+  tick();
   timer = setInterval(tick, db.settings.refreshSec*1000);
-  setStatus('רענון פעיל', 'ok');
+  setStatus('רענון פעיל','ok');
 }
 function stop(){ if(timer) clearInterval(timer); timer=null; setStatus('נעצר','warn'); }
 
 async function tick(){
-  if(tickRunning) return;
-  tickRunning = true;
+  if(busy) return; busy=true;
   try{
-    resetDailyUsageIfNeeded(); updateUsagePill();
-    const symbols = Object.keys(db.items);
-    if(!symbols.length){ render(); return; }
-
-    const now = Date.now();
-    const interval = calcSymbolIntervalSec();
-
-    // מצא מי “מגיע תורו” לפי nextDueTs
-    const due = symbols
-      .map(s=>({s, due: db.items[s].nextDueTs||0}))
-      .filter(o=> o.due<=now)
-      .sort((a,b)=> a.due - b.due);
-
-    if(due.length){
-      const pick = due[0].s;
+    if(!inUpdateWindow()){ setStatus('מחוץ לחלון עדכון','warn',true); return; }
+    const syms=Object.keys(db.items);
+    if(!syms.length) return;
+    const now=Date.now();
+    const due = syms.map(s=>({s,due:db.items[s].nextDueTs||0})).sort((a,b)=>a.due-b.due);
+    const batchSize = db.settings.provider==='fh'? 2 : 1;
+    for(let i=0;i<Math.min(batchSize, due.length); i++){
+      const pick=due[i].s;
       await refreshOne(pick);
-      // קבע מועד הבא לפי האינטרוול המחושב או 15ש׳ אם strict כבוי
-      db.items[pick].nextDueTs = now + interval*1000;
-      save();
+      if(needSessions(db.items[pick])) await refreshSessions(pick);
+      db.items[pick].nextDueTs = now + calcSymbolIntervalSec()*1000;
     }
     $('#lastUpdate').textContent = new Date().toLocaleString('he-IL');
-
-    // מידע שקוף למשתמש
-    const cycleSec = interval; // כל סימול מתוזמן פרטנית לפי interval
-    $('#rateInfo').innerHTML = `קצב רענון: <b id="refreshLabel">${db.settings.refreshSec}s</b> · יעד לסימול ≈ <b>${Math.round(cycleSec/60)} דק׳</b>`;
-
-  } finally {
-    render();
-    tickRunning = false;
+  }finally{
+    save(); render(); busy=false;
   }
 }
+function calcSymbolIntervalSec(){
+  const base = db.settings.provider==='fh'? 15 : db.settings.provider==='td'? 60 : 120;
+  const S=Math.max(1,Object.keys(db.items).length);
+  const daily = db.settings.dailyBudget||25;
+  const perSymbol = Math.max(1, Math.floor(daily/S));
+  const fromBudget = Math.ceil(86400/perSymbol);
+  return db.settings.strictBudget ? Math.max(base, fromBudget) : base;
+}
+function needSessions(it){ return !it.sessions || (Date.now()-(it.sessions?.ts||0) > 5*60*1000); }
 
 async function refreshOne(sym){
   try{
-    const q = await API.globalQuote(sym); // GLOBAL_QUOTE
-    const g = q['Global Quote'] || {};
-    const price = parseFloat(g['05. price']);
-    const change = parseFloat(g['09. change']);
-    const chPct = parseFloat((g['10. change percent']||'0').replace('%',''));
+    if(!Provider.getKey()) throw new Error('אין מפתח לספק הנוכחי');
+    const data = await Provider.quote(sym);
+    let price=null, chg=null;
+    if(db.settings.provider==='av'){
+      const g=data['Global Quote']||{};
+      price=parseFloat(g['05. price']); chg=parseFloat((g['10. change percent']||'0').replace('%',''));
+    }else if(db.settings.provider==='fh'){
+      price=data.c ?? null; chg=data.dp ?? null;
+    }else{
+      price=parseFloat(data?.price ?? data?.close ?? data?.last ?? NaN);
+      chg=parseFloat(data?.change_percent ?? data?.percent_change ?? NaN);
+      if(!isFinite(price) && data?.data) price=parseFloat(data.data?.[0]?.price);
+    }
     const prev = db.items[sym].last?.price ?? null;
-    const crossMsgs = computeCrossAndZone(sym, prev, price, chPct);
-    db.items[sym].last = { price, change, changePct: chPct, cross: crossMsgs };
-    save();
-    setStatus('עודכן', 'ok', true);
-  }catch(e){
-    console.warn('quote fail', sym, e.message);
-    const msg = e.message.includes('Thank you for using Alpha Vantage') ? 'מגבלת קצב בשרת – המתנה…' :
-                e.message.includes('ניצלת את התקציב היומי') ? 'ניצלנו את התקציב היומי המקומי' :
-                'שגיאת API';
-    setStatus(msg, 'warn');
-  }
+    const crossMsgs = computeCrossAndZone(sym, prev, price, chg);
+    db.items[sym].last = {price, changePct: chg, cross: crossMsgs};
+    if(!db.items[sym].sector) { fetchSector(sym).catch(()=>{}); }
+    setStatus('עודכן','ok',true);
+  }catch(e){ setStatus(shortAPIErr(e),'warn'); }
 }
 
-/*** ====== לוגיקת חציות + סטטיסטיקת “בתוך האזור” ====== ***/
-function computeCrossAndZone(sym, prevPrice, currPrice, currPct){
-  const it = db.items[sym];
-  const msgs = [];
+async function refreshSessions(sym){
+  try{
+    const series = await Provider.intraday(sym);
+    const points = normalizeIntraday(series);
+    const sess = splitSessions(points);
+    db.items[sym].sessions = {ts:Date.now(), ...sess};
+  }catch(e){ console.warn('sessions', sym, e.message); }
+}
 
-  function zoneMsg(prevVal, currVal, lower, upper, label){
+function normalizeIntraday(series){
+  const arr=[];
+  if(series?.['Time Series (5min)']){
+    for(const [ts,row] of Object.entries(series['Time Series (5min)'])){
+      arr.push({t:new Date(ts.replace(' ','T')+'Z'), c:parseFloat(row['4. close'])});
+    }
+  }else if(series?.s==='ok' && Array.isArray(series?.t)){
+    for(let i=0;i<series.t.length;i++){ arr.push({t:new Date(series.t[i]*1000), c:series.c[i]}); }
+  }else if(series?.values){
+    for(const v of series.values){ arr.push({t:new Date(v.datetime), c:parseFloat(v.close)}); }
+  }
+  arr.sort((a,b)=>a.t-b.t);
+  return arr;
+}
+
+function splitSessions(points){
+  const toNY = (d)=> new Date(d.toLocaleString('en-US', {timeZone:'America/New_York'}));
+  const getHourMin = (d)=>{ const nd=toNY(d); return nd.getHours()*60+nd.getMinutes(); };
+  let pre=null, reg=null, aft=null, ovr=null;
+  const inside = (m, a,b)=> m>=a && m<b;
+  for(const p of points){
+    const m = getHourMin(p.t);
+    if(inside(m, 4*60, 9*60+30)) pre = p;
+    else if(inside(m, 9*60+30, 16*60)) reg = p;
+    else if(inside(m, 16*60, 20*60)) aft = p;
+    else ovr = p;
+  }
+  return { pre, reg, aft, ovr };
+}
+
+async function fetchSector(sym){
+  try{
+    const o = await Provider.profile(sym);
+    let sector = '';
+    if(db.settings.provider==='av') sector = o.Sector || '';
+    else if(db.settings.provider==='fh') sector = o.finnhubIndustry || o.gsector || o.sector || '';
+    else sector = o?.sector || o?.Sector || '';
+    db.items[sym].sector = sector || db.items[sym].sector || '';
+    save();
+    const tag = document.getElementById('sec-'+sym); if(tag) tag.textContent = db.items[sym].sector||'—';
+  }catch(e){ }
+}
+
+function computeCrossAndZone(sym, prevPrice, currPrice, currPct){
+  const it=db.items[sym]; const msgs=[];
+  function zoneMsg(prevVal,currVal,lower,upper,label){
     if(lower==null || upper==null) return;
     const wasInside = prevVal!=null && prevVal>=lower && prevVal<=upper;
     const isInside  = currVal!=null && currVal>=lower && currVal<=upper;
     if(wasInside!==isInside){
-      msgs.push(isInside ? `נכנס לאזור ${label} (${lower}–${upper})`
-                         : `יצא מאזור ${label} (${lower}–${upper})`);
+      const tag = currentSessionTag();
+      msgs.push((isInside ? `נכנס`:`יצא`) + ` לאזור ${label} (${lower}–${upper}) [${tag}]`);
     }
-    // סטטיסטיקה של זמן בתוך האזור
-    const now = Date.now();
-    const z = it.zoneStats ||= {insideMs:0,totalMs:0,lastTs: now};
-    const dt = Math.max(0, now - (z.lastTs||now));
-    if(z.lastTs){
-      z.totalMs += dt;
-      if(isInside) z.insideMs += dt;
-    }
-    z.lastTs = now;
+    const now=Date.now(); const z=it.zoneStats ||= {insideMs:0,totalMs:0,lastTs:now};
+    const dt=Math.max(0, now-(z.lastTs||now)); if(z.lastTs){ z.totalMs+=dt; if(isInside) z.insideMs+=dt; } z.lastTs=now;
   }
-
   if(it.thrType==='price'){
-    const u = it.thrUpper, l = it.thrLower;
-    if(u!=null && prevPrice!=null && prevPrice<=u && currPrice>u) msgs.push(`עלה מעל ${u}`);
-    if(l!=null && prevPrice!=null && prevPrice>=l && currPrice<l) msgs.push(`ירד מתחת ${l}`);
-    zoneMsg(prevPrice, currPrice, l, u, 'מחיר');
-  } else { // pct
-    const u = it.thrUpper, l = it.thrLower;
-    const prevPct = it.last?.changePct ?? null;
-    if(u!=null && prevPct!=null && prevPct<=u && currPct>u) msgs.push(`שינוי יומי חצה ↑ ${u}%`);
-    if(l!=null && prevPct!=null && prevPct>=l && currPct<l) msgs.push(`שינוי יומי חצה ↓ ${l}%`);
-    zoneMsg(prevPct, currPct, l, u, 'אחוז');
+    const u=it.thrUpper, l=it.thrLower;
+    if(u!=null && prevPrice!=null && prevPrice<=u && currPrice>u) msgs.push(`עלה מעל ${u} [${currentSessionTag()}]`);
+    if(l!=null && prevPrice!=null && prevPrice>=l && currPrice<l) msgs.push(`ירד מתחת ${l} [${currentSessionTag()}]`);
+    zoneMsg(prevPrice,currPrice,l,u,'מחיר');
+  }else{
+    const u=it.thrUpper, l=it.thrLower; const prevPct = it.last?.changePct ?? null;
+    if(u!=null && prevPct!=null && prevPct<=u && currPct>u) msgs.push(`% חצה ↑ ${u} [${currentSessionTag()}]`);
+    if(l!=null && prevPct!=null && prevPct>=l && currPct<l) msgs.push(`% חצה ↓ ${l} [${currentSessionTag()}]`);
+    zoneMsg(prevPct,currPct,l,u,'אחוז');
   }
-
-  // יצירת התראות חדשות בלבד
   if(msgs.length){
-    const t = Date.now();
+    const t=Date.now();
     for(const m of msgs){
-      const id = `${sym}|${m}`;
-      const already = db.alerts.find(a=>a.id===id && t-a.ts<12*60*60*1000); // 12 שעות
+      const id=`${sym}|${m}`;
+      const already=db.alerts.find(a=>a.id===id && t-a.ts<12*60*60*1000);
       if(!already){
-        db.alerts.push({id, sym, m, ts:t, seen:false});
-        toast(`${sym}: ${m}`, 'ok');
-        if(!isDND()){ notifyUser(sym, m); }
+        db.alerts.push({id,sym,m,ts:t,seen:false});
+        toast(`${sym}: ${m}`,'ok');
+        if(!isDND()) notifyUser(sym, m);
       }
     }
-    save();
   }
   return msgs;
 }
-
-/*** ====== חלון פרטים ====== ***/
-const dlg = $('#dlg'); $('#dlgClose').onclick=()=>dlg.close();
-async function openDetails(sym){
-  const it = db.items[sym];
-  $('#dlgTitle').textContent = sym;
-  $('#dlgSub').textContent = it.name||'';
-  $('#ovw').textContent = 'טוען…';
-  $('#prof').textContent = '—';
-  $('#ratios').textContent = '—';
-  $('#fund').textContent = '—';
-  dlg.showModal();
-  try{
-    const o = await API.overview(sym); // OVERVIEW
-    $('#ovw').textContent = o.Description || '—';
-    $('#prof').innerHTML =
-      `<div>ענף: <b>${escapeHtml(o.Industry||'—')}</b></div>
-       <div>סקטור: <b>${escapeHtml(o.Sector||'—')}</b> | מדינה: <b>${escapeHtml(o.Country||'—')}</b></div>
-       <div>אתר: ${o.Website?`<a href="${o.Website}" target="_blank" rel="noopener">${o.Website}</a>`:'—'}</div>`;
-    $('#ratios').innerHTML =
-      `<div>מכפיל רווח (TTM): <b>${o.TrailingPE||'—'}</b></div>
-       <div>מכפיל מכירות (TTM): <b>${o.PriceToSalesRatioTTM||'—'}</b></div>
-       <div>מרווח תפעולי: <b>${o.OperatingMarginTTM||'—'}</b></div>
-       <div>תשואת דיבידנד: <b>${o.DividendYield||'—'}</b></div>`;
-    $('#fund').innerHTML =
-      `<div>שווי שוק (מוערך): <b>${o.MarketCapitalization?fmt.format(parseFloat(o.MarketCapitalization)):'—'}</b></div>
-       <div>מניות מונפקות: <b>${o.SharesOutstanding?fmt.format(parseFloat(o.SharesOutstanding)):'—'}</b></div>
-       <div>דוח אחרון: <b>${escapeHtml(o.LatestQuarter||'—')}</b></div>`;
-    // סימון התראות כנקראו
-    db.alerts.filter(a=>a.sym===sym).forEach(a=>a.seen=true);
-    db.items[sym].seenAlertsTs = Date.now(); save(); render();
-  }catch(e){
-    $('#ovw').innerHTML = `<span class="danger-text">שגיאה בטעינת פרטים: ${escapeHtml(e.message)}</span>`;
-  }
+function currentSessionTag(){
+  const ny = new Date().toLocaleString('en-US', {timeZone:'America/New_York'});
+  const d=new Date(ny); const m=d.getHours()*60+d.getMinutes();
+  if(m>=4*60 && m<9*60+30) return 'Pre';
+  if(m>=9*60+30 && m<16*60) return 'Regular';
+  if(m>=16*60 && m<20*60) return 'After';
+  return 'Overnight';
 }
 
-/*** ====== בדיקת API ומצב מערכת ====== ***/
+function bindInlineEditors(){
+  $$('#tbody [data-edit]').forEach(inp=>{
+    const sym=inp.dataset.sym, field=inp.dataset.edit;
+    if(inp.tagName==='INPUT'){
+      inp.onchange = ()=>{ applyEdit(sym, field, inp.value); };
+    }else if(inp.tagName==='SELECT'){
+      inp.onchange = ()=>{ applyEdit(sym, field, inp.value); };
+    }else{
+      inp.onblur = ()=>{ applyEdit(sym, field, inp.value); };
+    }
+  });
+}
+function applyEdit(sym, field, value){
+  const it=db.items[sym]; if(!it) return;
+  if(field==='thrUpper' || field==='thrLower'){ it[field] = value===''?null:parseFloat(value); }
+  else if(field==='thrType'){ it.thrType=value; }
+  else if(field==='name' || field==='note' || field==='rank'){ it[field]=value; }
+  save(); render();
+}
+
 $('#btnTest').onclick = async ()=>{
   try{
-    API.setKey($('#apiKey').value);
+    applySettingsFromUI();
+    if(!Provider.getKey()) throw new Error('אין מפתח לספק הנוכחי');
     setStatus('בודק…','warn');
-    await API.globalQuote('MSFT'); // קריאה קלה לאימות
-    setStatus('חיבור תקין', 'ok');
-    toast('בדיקת API עברה בהצלחה','ok');
-  }catch(e){
-    const isLimit = /limit|Thank you for using Alpha Vantage/i.test(e.message);
-    setStatus(isLimit?'חסימת קצב/מכסה – נסה מאוחר יותר':'כשל בבדיקה', isLimit?'warn':'bad');
-    toast('בדיקת API נכשלה: '+e.message,'err');
-  }
+    await Provider.quote('MSFT');
+    setStatus('חיבור תקין','ok');
+    toast('בדיקה הצליחה','ok');
+  }catch(e){ setStatus(shortAPIErr(e),'bad'); toast(e.message,'err'); }
 };
-function setStatus(txt, tone='ok', silent=false){
-  $('#sysStatus').textContent = txt;
-  $('#statusText').textContent = txt;
+function shortAPIErr(e){
+  const msg = e.message||'שגיאת API';
+  if(/Thank you for using Alpha Vantage|standard API call|premium/i.test(msg)) return 'מגבלת קצב/מכסה ספק';
+  if(/rate limit|Too Many|429/.test(msg)) return 'חריגה ממגבלה';
+  if(/API key|apikey|token/i.test(msg)) return 'מפתח חסר/שגוי';
+  return 'שגיאת API';
+}
+function setStatus(txt,tone='ok',silent=false){
+  $('#sysStatus').textContent=txt; $('#statusText').textContent=txt;
   $('#dotOK').style.display = tone==='ok'?'inline-block':'none';
   $('#dotWARN').style.display = tone==='warn'?'inline-block':'none';
   $('#dotBAD').style.display = tone==='bad'?'inline-block':'none';
-  if(!silent){
-    if(tone==='ok') toast(txt,'ok');
-    else if(tone==='warn') toast(txt,'warn');
-    else toast(txt,'err');
-  }
+  if(!silent){ toast(txt, tone==='ok'?'ok':'warn'); }
 }
 
-/*** ====== אירועים ====== ***/
+function applySettingsFromUI(){
+  const p = document.querySelector('input[name="provider"]:checked')?.value||'av';
+  db.settings.provider = p;
+  db.settings.keys.av = $('#apiKeyAV').value;
+  db.settings.keys.fh = $('#apiKeyFH').value;
+  db.settings.keys.td = $('#apiKeyTD').value;
+  db.settings.notifyDesktop = $('#notifyDesktop').checked;
+  db.settings.notifySound   = $('#notifySound').checked;
+  db.settings.dndFrom = parseInt($('#dndFrom').value||'22',10);
+  db.settings.dndTo   = parseInt($('#dndTo').value||'7',10);
+  save(); setBudgetByProvider(); updateUsagePill();
+}
+$$('input[name="provider"]').forEach(r=>{
+  r.onchange=()=>{ applySettingsFromUI(); render(); };
+});
+$('#apiKeyAV').value = db.settings.keys.av||'';
+$('#apiKeyFH').value = db.settings.keys.fh||'';
+$('#apiKeyTD').value = db.settings.keys.td||'';
+$('#refreshSec').value = db.settings.refreshSec||15;
+$('#updFrom').value = db.settings.updateFrom??8;
+$('#updTo').value   = db.settings.updateTo??23;
+$('#strictBudget').checked = db.settings.strictBudget ?? true;
+$('#dailyBudget').value = db.settings.dailyBudget ?? 25;
+$('#notifyDesktop').checked = db.settings.notifyDesktop ?? true;
+$('#notifySound').checked   = db.settings.notifySound ?? true;
+$('#dndFrom').value = db.settings.dndFrom ?? 22;
+$('#dndTo').value   = db.settings.dndTo   ?? 7;
+requestNotifPermission();
+
 $('#btnAdd').onclick = addItem;
 $('#btnStart').onclick = start;
 $('#btnStop').onclick = stop;
 $('#btnClearAlerts').onclick = ()=>{ db.alerts.forEach(a=>a.seen=true); save(); render(); toast('ההתראות סומנו כנקראו','ok'); };
-
 $('#btnExport').onclick = ()=>{
   const minimal = {
     version: 1,
     items: Object.fromEntries(
-      Object.entries(db.items).map(([sym, it]) => [sym, {
-        name: it.name||'',
-        note: it.note||'',
-        thrType: it.thrType||'price',
-        thrUpper: it.thrUpper ?? null,
-        thrLower: it.thrLower ?? null
+      Object.entries(db.items).map(([sym,it]) => [sym, {
+        name: it.name||'', note: it.note||'', rank: it.rank||'mid', sector: it.sector||'',
+        thrType: it.thrType||'price', thrUpper: it.thrUpper ?? null, thrLower: it.thrLower ?? null
       }])
     )
   };
-  const blob = new Blob([JSON.stringify(minimal,null,2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='watchlist-items.json'; a.click();
-  URL.revokeObjectURL(url);
+  const blob=new Blob([JSON.stringify(minimal,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='watchlist.json'; a.click(); URL.revokeObjectURL(url);
 };
+$('#btnExportCSV').onclick = exportCSV;
 
-$('#fileImport').parentElement.onclick = ()=> $('#fileImport').click();
-$('#fileImport').onchange = e=>{
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = ()=> {
+$('#fileImport').parentElement.onclick=()=>$('#fileImport').click();
+$('#fileImport').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>{
     try{
-      const obj = JSON.parse(r.result);
+      const obj=JSON.parse(r.result);
       if(obj.items && typeof obj.items==='object'){
-        for(const [sym, bare] of Object.entries(obj.items)){
-          db.items[sym] ??= { zoneStats:{insideMs:0,totalMs:0,lastTs:Date.now()}, nextDueTs: Date.now() };
+        for(const [sym,bare] of Object.entries(obj.items)){
+          db.items[sym] ??= { zoneStats:{insideMs:0,totalMs:0,lastTs:Date.now()}, nextDueTs: Date.now(), sym };
           Object.assign(db.items[sym], {
             name: bare.name||db.items[sym].name||'',
             note: bare.note||db.items[sym].note||'',
+            rank: bare.rank||db.items[sym].rank||'mid',
+            sector: bare.sector||db.items[sym].sector||'',
             thrType: bare.thrType||db.items[sym].thrType||'price',
             thrUpper: bare.thrUpper ?? db.items[sym].thrUpper ?? null,
             thrLower: bare.thrLower ?? db.items[sym].thrLower ?? null
           });
         }
-        save(); render(); toast('ייבוא רשימת מניות הושלם','ok');
-      } else {
-        toast('קובץ ייבוא לא תקין (חסר items)','err');
-      }
-    }catch(err){ toast('קובץ לא תקין','err'); }
-  };
-  r.readAsText(f);
+        save(); render(); toast('ייבוא הושלם','ok');
+      } else toast('קובץ לא תקין','err');
+    }catch{ toast('קובץ לא תקין','err'); }
+  }; r.readAsText(f);
 };
-
-$('#refreshSec').onchange = ()=>{
-  db.settings.refreshSec = parseInt($('#refreshSec').value||'15',10);
-  save(); $('#refreshLabel').textContent = db.settings.refreshSec+'s';
-};
-$('#strictBudget').onchange = ()=>{ db.settings.strictBudget = $('#strictBudget').checked; save(); };
-$('#dailyBudget').onchange = ()=>{ db.settings.dailyBudget = getDailyBudget(); save(); updateUsagePill(); };
-$('#notifyDesktop').onchange = ()=>{ db.settings.notifyDesktop = $('#notifyDesktop').checked; save(); if(db.settings.notifyDesktop) requestNotifPermission(); };
-$('#notifySound').onchange = ()=>{ db.settings.notifySound = $('#notifySound').checked; save(); };
-$('#dndFrom').onchange = ()=>{ db.settings.dndFrom = parseInt($('#dndFrom').value||'22',10); save(); };
-$('#dndTo').onchange   = ()=>{ db.settings.dndTo   = parseInt($('#dndTo').value||'7',10); save(); };
-
-$('#apiKey').value = db.settings.apiKey||'';
-$('#refreshSec').value = db.settings.refreshSec||15;
-$('#refreshLabel').textContent = (db.settings.refreshSec||15)+'s';
-$('#strictBudget').checked = db.settings.strictBudget ?? true;
-$('#dailyBudget').value = db.settings.dailyBudget ?? 500;
-$('#notifyDesktop').checked = db.settings.notifyDesktop ?? true;
-$('#notifySound').checked = db.settings.notifySound ?? true;
-$('#dndFrom').value = db.settings.dndFrom ?? 22;
-$('#dndTo').value   = db.settings.dndTo   ?? 7;
-updateUsagePill();
-requestNotifPermission();
 
 $('#tbody').onclick = (ev)=>{
-  const btn = ev.target.closest('button'); if(!btn) return;
-  const sym = btn.dataset.sym;
-  const act = btn.dataset.act;
+  const btn=ev.target.closest('button'); if(!btn) return;
+  const sym=btn.dataset.sym, act=btn.dataset.act;
   if(act==='details') openDetails(sym);
   if(act==='delete'){ if(confirm('למחוק את '+sym+'?')) delItem(sym); }
-  if(act==='refresh'){ refreshOne(sym).then(render); }
+  if(act==='refresh'){ refreshOne(sym).then(()=>refreshSessions(sym)).then(render); }
 };
+$$('#tbl thead th[data-k]').forEach(th=>{
+  th.onclick=()=>{
+    const k=th.dataset.k;
+    if(db.sort.k===k) db.sort.dir = db.sort.dir==='asc'?'desc':'asc'; else { db.sort.k=k; db.sort.dir='asc'; }
+    save(); render();
+  };
+});
 
-// רינדור ראשוני
+const dlg=$('#dlg'); $('#dlgClose').onclick=()=>dlg.close();
+async function openDetails(sym){
+  const it=db.items[sym];
+  $('#dlgTitle').textContent=sym; $('#dlgSub').textContent=it.name||''; $('#ovw').textContent='טוען…'; $('#prof').textContent='—'; $('#ratios').textContent='—';
+  dlg.showModal();
+  try{
+    const o=await Provider.profile(sym);
+    const sector = db.settings.provider==='av'?o.Sector : db.settings.provider==='fh'?(o.finnhubIndustry||o.sector) : (o.sector||o.Sector);
+    if(sector && !it.sector){ it.sector=sector; }
+    $('#ovw').textContent = o.Description || o.longBusinessSummary || '—';
+    $('#prof').innerHTML = `
+      <div>סקטור: <b>${escapeHtml(sector||'—')}</b></div>
+      <div>תעשייה: <b>${escapeHtml(o.Industry||o.industry||'—')}</b></div>
+      <div>מדינה: <b>${escapeHtml(o.Country||o.country||'—')}</b></div>
+      <div>אתר: ${o.Website?`<a href="${o.Website}" target="_blank" rel="noopener">${o.Website}</a>`:'—'}</div>`;
+    $('#ratios').innerHTML = `
+      <div>PE: <b>${o.TrailingPE||o.pe||'—'}</b></div>
+      <div>PS: <b>${o.PriceToSalesRatioTTM||o.ps||'—'}</b></div>
+      <div>Dividend Yield: <b>${o.DividendYield||o.dividendYield||'—'}</b></div>`;
+    save(); render();
+  }catch(e){ $('#ovw').innerHTML=`<span class="danger-text">שגיאה: ${escapeHtml(e.message)}</span>`; }
+}
+
+function exportCSV(){
+  const headers = ["Symbol","Name","Sector","Price","ChangePct","Pre","Regular","After","Overnight","ThreshType","Upper","Lower","Rank","Note"];
+  const rows = [headers];
+  for(const [sym,it] of Object.entries(db.items)){
+    rows.push([
+      sym,
+      (it.name||''),
+      (it.sector||''),
+      (it.last?.price??''),
+      (it.last?.changePct??''),
+      (it.sessions?.pre?.price??''),
+      (it.sessions?.reg?.price??''),
+      (it.sessions?.aft?.price??''),
+      (it.sessions?.ovr?.price??''),
+      (it.thrType||''),
+      (it.thrUpper??''),
+      (it.thrLower??''),
+      (it.rank||''),
+      (it.note||'')
+    ]);
+  }
+  const csv = rows.map(r=>r.map(v=>{
+    const s = (v??'').toString();
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='watchlist.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function setStatus(txt,tone='ok',silent=false){
+  $('#sysStatus').textContent=txt; $('#statusText').textContent=txt;
+  $('#dotOK').style.display = tone==='ok'?'inline-block':'none';
+  $('#dotWARN').style.display = tone==='warn'?'inline-block':'none';
+  $('#dotBAD').style.display = tone==='bad'?'inline-block':'none';
+  if(!silent){ toast(txt, tone==='ok'?'ok':tone==='warn'?'warn':'err'); }
+}
+
+function valueOrDash(v){ return v!=null?fmt.format(v):'<span class="muted">—</span>'; }
+
+// רינדור ראשון
 render();
 </script>
 </body>
