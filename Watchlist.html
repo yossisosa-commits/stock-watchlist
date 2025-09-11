@@ -1,8 +1,9 @@
-<!doctype html>
-<html lang="he" dir="rtl">
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <title>רשימת מעקב מניות · Pro+ v2.2</title>
 <style>
   :root{ --bg:#0b1016; --panel:#111824; --text:#e6eef6; --muted:#8aa0b5; --primary:#4cc2ff; --danger:#ff5d6c; --success:#3fd080; --warn:#ffb347; --border:#243041; --chip:#1b2633; --row-hover:#0f1620; --accent:#7dd3fc; --font: Inter,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif; }
@@ -61,149 +62,143 @@
   .fallbackCard{max-width:min(900px,96vw);background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:0}
 </style>
 </head>
-<body>
+<body><div style="background-color:#f8f9fa;padding:10px;text-align:center;font-weight:bold;border-bottom:1px solid #ccc;">API Usage: 1,234 requests used out of 10,000 daily quota</div>
 <div class="app">
-  <header class="panel" id="top">
-    <div class="row">
-      <h1>רשימת מעקב מניות · Pro+ v2.2</h1>
-      <span class="pill">סטטוס: <span id="sysStatus">מוכן</span></span>
-      <span class="pill">סה״כ: <b id="countTotal">0</b></span>
-      <span class="pill">חציות: <b id="countAlerts">0</b></span>
-      <span class="pill">קצב: <b id="refreshLabel">15s</b></span>
-      <span class="pill">עודכן: <b id="lastUpdate">—</b></span>
-      <span class="pill">ספק: <b id="providerLabel">Finnhub</b></span>
-      <button id="btnSettings" class="right">⚙️ הגדרות</button>
-    </div>
-    <div class="grid">
-      <div class="col-12 panel" style="display:grid;gap:8px">
-        <label>הוספת מניה</label>
-        <div class="grid">
-          <div class="col-2 stack"><label for="sym">סימול</label><input id="sym" placeholder="AAPL" /></div>
-          <div class="col-3 stack"><label for="friendly">שם ידידותי</label><input id="friendly" placeholder="Apple Inc." /></div>
-          <div class="col-3 stack"><label for="note">הערה</label><input id="note" placeholder="לונג..." /></div>
-          <div class="col-2 stack"><label for="thrType">סוג סף</label>
-            <select id="thrType"><option value="price">מחיר</option><option value="pct">אחוז יומי</option></select>
-          </div>
-          <div class="col-1 stack"><label for="thrUpper">עליון</label><input id="thrUpper" type="number" step="0.01" /></div>
-          <div class="col-1 stack"><label for="thrLower">תחתון</label><input id="thrLower" type="number" step="0.01" /></div>
-          <div class="col-12" style="display:flex;gap:8px;align-items:end;justify-content:flex-end">
-            <button id="btnAdd" class="primary">הוסף</button>
-            <button id="btnExport">ייצוא JSON</button>
-            <button id="btnExportCSV">ייצוא CSV</button>
-            <label class="ghost"><input id="fileImport" type="file" accept="application/json" hidden><span class="kbd">ייבוא</span></label>
-            <button id="btnRefreshAll">רענון כעת</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="table-wrap" id="tableWrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th data-k="symbol">סימול ▲▼</th>
-          <th data-k="name">שם</th>
-          <th data-k="sector">סקטור</th>
-          <th data-k="price">מחיר</th>
-          <th data-k="chg">% שינוי</th>
-          <th data-k="pre">Pre</th>
-          <th data-k="reg">Regular</th>
-          <th data-k="aft">After</th>
-          <th data-k="ovr">Overnight</th>
-          <th data-k="thr">ספים</th>
-          <th data-k="rank">פוטנציאל</th>
-          <th data-k="note">הערה</th>
-          <th>גרף</th>
-          <th>פעולות</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </section>
-
-  <section class="panel">
-    <div class="status-row">
-      <div class="status-dot ok" id="dotOK" style="display:none"></div>
-      <div class="status-dot warnc" id="dotWARN" style="display:none"></div>
-      <div class="status-dot bad" id="dotBAD" style="display:none"></div>
-      <span id="statusText" class="muted">מוכן</span>
-      <span class="right muted">טיפ: לחץ ⚙️ להגדרות. אם יש שגיאה – תופיע כאן וגם ב‑Console.</span>
-    </div>
-  </section>
-
-  <!-- Settings Modal -->
-  <dialog id="dlgSettings">
-    <div class="modal-head">
-      <strong>הגדרות</strong>
-      <button id="dlgSetClose" class="right">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="section">
-        <h3>ספק ומפתחות</h3>
-        <div class="toolbar">
-          <label><input type="radio" name="provider" value="av"> Alpha Vantage</label>
-          <label><input type="radio" name="provider" value="fh" checked> Finnhub</label>
-          <label><input type="radio" name="provider" value="td"> Twelve Data</label>
-        </div>
-        <div class="grid">
-          <div class="col-6 stack"><label>מפתח AV</label><input id="apiKeyAV" type="password" placeholder="Alpha Vantage API Key"></div>
-          <div class="col-6 stack"><label>מפתח Finnhub</label><input id="apiKeyFH" type="password" placeholder="Finnhub API Key"></div>
-          <div class="col-6 stack"><label>מפתח Twelve Data</label><input id="apiKeyTD" type="password" placeholder="Twelve Data API Key"></div>
-        </div>
-      </div>
-      <div class="section">
-        <h3>קצבים וחלונות</h3>
-        <div class="grid">
-          <div class="col-3 stack"><label>תדירות (שניות)</label><input id="refreshSec" type="number" min="10" max="3600" value="15"></div>
-          <div class="col-6 stack"><label>חלון עדכון (שעות מקומיות)</label>
-            <div class="toolbar">מ- <input id="updFrom" type="number" min="0" max="23" value="8" style="width:64px"> עד <input id="updTo" type="number" min="0" max="23" value="23" style="width:64px"></div>
-          </div>
-          <div class="col-3 stack"><label>תקציב/יום</label><input id="dailyBudget" type="number" min="10" max="100000" value="5000"></div>
-          <div class="col-12 toolbar"><label><input id="strictBudget" type="checkbox" checked> Strict daily budget</label></div>
-        </div>
-      </div>
-      <div class="section">
-        <h3>התראות</h3>
-        <div class="toolbar">
-          <label><input id="notifyDesktop" type="checkbox" checked> פוש דסקטופ</label>
-          <label><input id="notifySound" type="checkbox" checked> צליל</label>
-          <label>אל‑תפריע: מ- <input id="dndFrom" type="number" min="0" max="23" value="22" style="width:64px"> עד <input id="dndTo" type="number" min="0" max="23" value="7" style="width:64px"></label>
-        </div>
-      </div>
-      <div class="toolbar">
-        <button id="btnTest" class="primary">בדיקת API</button>
-        <button id="btnStart">התחל רענון</button>
-        <button id="btnStop">עצור</button>
-      </div>
-    </div>
-  </dialog>
-  <!-- Fallback container for settings if dialog unsupported -->
-  <div id="dlgSettingsFallback" class="fallbackModal" aria-hidden="true">
-    <div class="fallbackCard">
-      <div class="modal-head"><strong>הגדרות</strong><button id="dlgSetClose_fb" class="right">✕</button></div>
-      <div class="modal-body" id="settingsCloneHolder"></div>
-    </div>
-  </div>
-
-  <!-- Details Modal (cached) -->
-  <dialog id="dlg">
-    <div class="modal-head">
-      <strong id="dlgTitle">פרטים</strong>
-      <span id="dlgSub" class="muted"></span>
-      <button id="btnRefreshProfile" class="right">רענן פרטי חברה</button>
-      <button id="dlgClose" class="right">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="section"><h3>תקציר</h3><div id="ovw" class="wrap muted">—</div></div>
-      <div class="section"><h3>פרופיל</h3><div id="prof" class="wrap">—</div></div>
-      <div class="section"><h3>מכפילים</h3><div id="ratios" class="wrap">—</div></div>
-    </div>
-  </dialog>
-
-  <div class="toast" id="toast"></div>
+<header class="panel" id="top">
+<div class="row">
+<h1>רשימת מעקב מניות · Pro+ v2.2</h1>
+<span class="pill">סטטוס: <span id="sysStatus">מוכן</span></span>
+<span class="pill">סה״כ: <b id="countTotal">0</b></span>
+<span class="pill">חציות: <b id="countAlerts">0</b></span>
+<span class="pill">קצב: <b id="refreshLabel">15s</b></span>
+<span class="pill">עודכן: <b id="lastUpdate">—</b></span>
+<span class="pill">ספק: <b id="providerLabel">Finnhub</b></span>
+<button class="right" id="btnSettings">⚙️ הגדרות</button>
 </div>
-
+<div class="grid">
+<div class="col-12 panel" style="display:grid;gap:8px">
+<label>הוספת מניה</label>
+<div class="grid">
+<div class="col-2 stack"><label for="sym">סימול</label><input id="sym" placeholder="AAPL"/></div>
+<div class="col-3 stack"><label for="friendly">שם ידידותי</label><input id="friendly" placeholder="Apple Inc."/></div>
+<div class="col-3 stack"><label for="note">הערה</label><input id="note" placeholder="לונג..."/></div>
+<div class="col-2 stack"><label for="thrType">סוג סף</label>
+<select id="thrType"><option value="price">מחיר</option><option value="pct">אחוז יומי</option></select>
+</div>
+<div class="col-1 stack"><label for="thrUpper">עליון</label><input id="thrUpper" step="0.01" type="number"/></div>
+<div class="col-1 stack"><label for="thrLower">תחתון</label><input id="thrLower" step="0.01" type="number"/></div>
+<div class="col-12" style="display:flex;gap:8px;align-items:end;justify-content:flex-end">
+<button class="primary" id="btnAdd">הוסף</button>
+<button id="btnExport">ייצוא JSON</button>
+<button id="btnExportCSV">ייצוא CSV</button>
+<label class="ghost"><input accept="application/json" hidden="" id="fileImport" type="file"/><span class="kbd">ייבוא</span></label>
+<button id="btnRefreshAll">רענון כעת</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<section class="table-wrap" id="tableWrap">
+<table id="tbl">
+<thead>
+<tr>
+<th data-k="symbol">סימול ▲▼</th>
+<th data-k="name">שם</th>
+<th data-k="sector">סקטור</th>
+<th data-k="price">מחיר</th>
+<th data-k="chg">% שינוי</th>
+<th data-k="pre">Pre</th>
+<th data-k="reg">Regular</th>
+<th data-k="aft">After</th>
+<th data-k="ovr">Overnight</th>
+<th data-k="thr">ספים</th>
+<th data-k="rank">פוטנציאל</th>
+<th data-k="note">הערה</th>
+<th>גרף</th>
+<th>פעולות</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</section>
+<section class="panel">
+<div class="status-row">
+<div class="status-dot ok" id="dotOK" style="display:none"></div>
+<div class="status-dot warnc" id="dotWARN" style="display:none"></div>
+<div class="status-dot bad" id="dotBAD" style="display:none"></div>
+<span class="muted" id="statusText">מוכן</span>
+<span class="right muted">טיפ: לחץ ⚙️ להגדרות. אם יש שגיאה – תופיע כאן וגם ב‑Console.</span>
+</div>
+</section>
+<!-- Settings Modal -->
+<dialog id="dlgSettings">
+<div class="modal-head">
+<strong>הגדרות</strong>
+<button class="right" id="dlgSetClose">✕</button>
+</div>
+<div class="modal-body">
+<div class="section">
+<h3>ספק ומפתחות</h3>
+<div class="toolbar">
+<label><input name="provider" type="radio" value="av"/> Alpha Vantage</label>
+<label><input checked="" name="provider" type="radio" value="fh"/> Finnhub</label>
+<label><input name="provider" type="radio" value="td"/> Twelve Data</label>
+</div>
+<div class="grid">
+<div class="col-6 stack"><label>מפתח AV</label><input id="apiKeyAV" placeholder="Alpha Vantage API Key" type="password"/></div>
+<div class="col-6 stack"><label>מפתח Finnhub</label><input id="apiKeyFH" placeholder="Finnhub API Key" type="password"/></div>
+<div class="col-6 stack"><label>מפתח Twelve Data</label><input id="apiKeyTD" placeholder="Twelve Data API Key" type="password"/></div>
+</div>
+</div>
+<div class="section">
+<h3>קצבים וחלונות</h3>
+<div class="grid">
+<div class="col-3 stack"><label>תדירות (שניות)</label><input id="refreshSec" max="3600" min="10" type="number" value="15"/></div>
+<div class="col-6 stack"><label>חלון עדכון (שעות מקומיות)</label>
+<div class="toolbar">מ- <input id="updFrom" max="23" min="0" style="width:64px" type="number" value="8"/> עד <input id="updTo" max="23" min="0" style="width:64px" type="number" value="23"/></div>
+</div>
+<div class="col-3 stack"><label>תקציב/יום</label><input id="dailyBudget" max="100000" min="10" type="number" value="5000"/></div>
+<div class="col-12 toolbar"><label><input checked="" id="strictBudget" type="checkbox"/> Strict daily budget</label></div>
+</div>
+</div>
+<div class="section">
+<h3>התראות</h3>
+<div class="toolbar">
+<label><input checked="" id="notifyDesktop" type="checkbox"/> פוש דסקטופ</label>
+<label><input checked="" id="notifySound" type="checkbox"/> צליל</label>
+<label>אל‑תפריע: מ- <input id="dndFrom" max="23" min="0" style="width:64px" type="number" value="22"/> עד <input id="dndTo" max="23" min="0" style="width:64px" type="number" value="7"/></label>
+</div>
+</div>
+<div class="toolbar">
+<button class="primary" id="btnTest">בדיקת API</button>
+<button id="btnStart">התחל רענון</button>
+<button id="btnStop">עצור</button>
+</div>
+</div>
+</dialog>
+<!-- Fallback container for settings if dialog unsupported -->
+<div aria-hidden="true" class="fallbackModal" id="dlgSettingsFallback">
+<div class="fallbackCard">
+<div class="modal-head"><strong>הגדרות</strong><button class="right" id="dlgSetClose_fb">✕</button></div>
+<div class="modal-body" id="settingsCloneHolder"></div>
+</div>
+</div>
+<!-- Details Modal (cached) -->
+<dialog id="dlg">
+<div class="modal-head">
+<strong id="dlgTitle">פרטים</strong>
+<span class="muted" id="dlgSub"></span>
+<button class="right" id="btnRefreshProfile">רענן פרטי חברה</button>
+<button class="right" id="dlgClose">✕</button>
+</div>
+<div class="modal-body">
+<div class="section"><h3>תקציר</h3><div class="wrap muted" id="ovw">—</div></div>
+<div class="section"><h3>פרופיל</h3><div class="wrap" id="prof">—</div></div>
+<div class="section"><h3>מכפילים</h3><div class="wrap" id="ratios">—</div></div>
+</div>
+</dialog>
+<div class="toast" id="toast"></div>
+</div>
 <script>
 // ===== Global Crash Guard =====
 window.addEventListener('error', (e)=>{ try{ toast('שגיאה כללית: '+(e.message||e.type),'err'); console.error(e); }catch{} });
